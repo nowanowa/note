@@ -1,2 +1,109 @@
-html{
+body{
+  line-height:1.8em;
 }
+article{
+  margin:auto;
+  max-width:1024px;
+}
+footer{
+  background:#eee;
+  margin:-8px;
+  margin-top:0;
+  padding:20px;
+  text-align:center;
+}
+header{
+  background:#efc;
+  margin-top:-10px;
+  padding:20px;
+}
+header time{
+  font-size:small;
+}
+header time:before{
+  content:"最終更新:";
+}
+h3{
+  padding:10px;
+  border-left:5px solid #ad2;
+  border-bottom:1px solid #ad2;
+}
+p{
+  text-indent:1em;
+}
+dfn{
+  font-weight:bold;
+}
+em{
+  border-bottom:3px solid #fc2;
+}
+.formula{
+  border-radius:0.5em;
+  padding:1em;
+}
+.formula figcaption{
+  font-size:larger;
+  font-weight:bold;
+}
+.faq{
+  background:#eef;
+  border:1px solid #008;
+}
+.faq figcaption{
+  padding-bottom:0.5em;
+  border-bottom:1px solid #008;
+  margin-bottom:0.5em;
+}
+.def{
+  border:1px dashed #000;
+}
+.def figcaption{
+  padding-bottom:0.5em;
+  border-bottom:1px dashed #000;
+  margin-bottom:0.5em;
+}
+.proof{
+  background:#efe;
+  padding:1em;
+}
+table{
+  border-collapse:collapse;
+}
+th,td{
+  padding-left:5px;
+  padding-right:5px;
+}
+.numbertable{
+  text-align:center;
+}
+.numbertable table{
+  margin-left:auto;
+  margin-right:auto;
+}
+.numbertable td{
+  text-align:right;
+}
+.numbertable .style1 tr{
+  border-top:1px solid #314;
+  border-bottom:1px solid #314;
+}
+.numbertable .style1 th{
+  background:#def;
+}
+.numbertable .style1 th,
+.numbertable .style1 td{
+  padding-left:1em;
+  padding-right:1em;
+}
+.numbertable .style1 .disable{
+  background:#ccc;
+}
+a.notes{
+  font-size:small;
+  vertical-align:super;
+}
+aside.notes{
+  border-top:1px dashed #314;
+  line-height:1.3em;
+}
+
