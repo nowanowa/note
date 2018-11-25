@@ -85,7 +85,14 @@ th,td{
 }
 .numbertable .style1 tr{
   border-top:1px solid #314;
-  border-bottom:1px solid #314;
+}
+.numbertable .style1 tr:first-child,
+.numbertable .style1 .border-top-bold{
+  border-top:2px solid #314;
+}
+.numbertable .style1 tr:last-child,
+.numbertable .style1 .border-bottom-bold{
+  border-bottom:2px solid #314;
 }
 .numbertable .style1 th{
   background:#def;
@@ -95,8 +102,19 @@ th,td{
   padding-left:1em;
   padding-right:1em;
 }
-.numbertable .style1 .disable{
+.numbertable .style1 .good{
+  background:#ffb;
+  color:#00f;
+}
+.numbertable .style1 .bad{
+  background:#ddd;
+  color:#f00;
+}
+.numbertable .style1 .disabled{
   background:#ccc;
+}
+.numbertable .style1 .tategaki-one-line{
+  width:1em;
 }
 a.notes{
   font-size:small;

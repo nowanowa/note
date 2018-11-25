@@ -184,34 +184,14 @@
       </ul>
     </figure>
     <p>また、冒頭で説明したとおり、互いに素な正の整数解 \((x,y,z)\) に対して、任意の正の整数 \(r\) 倍した組 \((rx,ry,rz)\) も、 \(n\) が同じ等式を満たします。</p>
-    <p>以上により、全ての整数 \(n\) に対して、正の整数の組 \((x,y,z)\) が分かりました。</p>
+    <p>以上により、全ての整数 \(n\) に対して、正の整数の組 \((x,y,z)\) が分かりました。めでたしめでたし。</p>
+    <p>……とは本稿ではなりません。冒頭でひとまず除外した、 \(x,y,z\) のいずれかが負や零である解について、あらためて考えてみましょう。</p>
   </section>
   <section>
-    <h3>零以下の解について</h3>
-    <p>冒頭でひとまず除外した、 \(x,y,z\) のいずれかがゼロ以下となる解について考えてみます。</p>
-    <p>まず、零について。零の冪 \(0^n\) は \(n&gt;0\) でしか定義されませんので、 \(n≧1\) の場合についてのみ考えます。</p>
+    <h3>負の解</h3>
+    <p>まず、負の数について。 \(n\) が偶数と奇数のそれぞれの場合について、方程式を満たす正の整数の組 \((a,b,c)\) から、正負を反転させる方法を考えます。</p>
     <ul>
-      <li>\(x=0\) としたとき、方程式は \(0+y^n=z^n\) となります。整数の正整数冪は単射なので、 \(y=z\) となります。この \(y=z\) は零や負の数でも構いません。同様に、 \(y=0\) としたときは \(x=z\) となります。</li>
-      <li>\(z=0\) としたとき、方程式は \(x^n+y^n=0\) となり、移項して \(x^n=-y^n\) となります。 \(n\) が偶数の場合、この等式を満たす \(x,y\) は \(x=y=0\) しかありません。 \(n\) が奇数の場合、 \(x=-y\) となります。 \(x\) が正の数のとき \(y\) は負の数、 \(x\) が負の数のとき \(y\) は正の数、 \(x=0\) のとき \(y=0\) となります。</li>
-    </ul>
-    <p>以上を整理すると次のような表になります。</p>
-    <figure class="numbertable">
-      <table class="style1">
-        <tr><th>\(n\)</th><th>\(x\)</th><th>\(y\)</th><th>\(z\)</th><th>備考</th></tr>
-        <tr><th rowspan="4">\(n=2m\)<br>\(n\)は正の偶数</th><td>\(0\)</td><td>\(0\)</td><td>\(0\)</td><td></td></tr>
-        <tr><td>\(0\)</td><td>\(±a\)</td><td>\(±a\)</td><td>±は独立</td></tr>
-        <tr><td>\(±a\)</td><td>\(0\)</td><td>\(±a\)</td><td>±は独立</td></tr>
-        <tr><td colspan="4" class="disable">\(x≠0,y≠0,z=0\) となる解は存在しない</td></tr>
-        <tr><th rowspan="4">\(n=2m-1\)<br>\(n\)は正の奇数</th><td>\(0\)</td><td>\(0\)</td><td>\(0\)</td><td></td></tr>
-        <tr><td>\(0\)</td><td>\(±a\)</td><td>\(±a\)</td><td>複号同順</td></tr>
-        <tr><td>\(±a\)</td><td>\(0\)</td><td>\(±a\)</td><td>複号同順</td></tr>
-        <tr><td>\(\pm{a}\)</td><td>\(\mp{a}\)</td><td>\(0\)</td><td>複号同順</td></tr>
-      </table>
-      <figcaption>\(0\) を含む解の一覧（ \(m,a\) は正の整数）</figcaption>
-    </figure>
-    <p>次に、負の数について。 \(n\) が偶数と奇数のそれぞれの場合について、方程式を満たす正の整数の組 \((a,b,c)\) で、正負を置き換える方法を考えます。</p>
-    <ul>
-      <li>\(n\) が偶数の場合、 \(a,b,c\) はそれぞれ別個に負の数と置き換えられます。そのため、正の整数の組 \((a,b,c)\) が方程式を満たすとき、 \((-a,b,c),(a,-b,c),(-a,-b,c),(a,b,-c),(-a,b,-c),(a,-b,-c),(-a,-b,-c)\) も方程式を満たします。</li>
+      <li>\(n\) が \(0\) 以外の偶数の場合、 \(a,b,c\) はそれぞれ別個に負の数と置き換えられます。そのため、正の整数の組 \((a,b,c)\) が方程式を満たすとき、 \((-a,b,c),(a,-b,c),(-a,-b,c),(a,b,-c),(-a,b,-c),(a,-b,-c),(-a,-b,-c)\) も方程式を満たします。</li>
       <li>\(n\) が奇数の場合、正の整数の組 \((a,b,c)\) が等式 \(a^n+b^n=c^n\) を満たすとします。符号の反転で、</li>
       <ul>
         <li>移項せずとも方程式を満たすのは、全ての正負を入れ替えた \((-a,-b,-c)\) のときのみです。</li>
@@ -220,28 +200,132 @@
         <li>\(c\) のみが異符号となるとき、方程式を満たす形に移項することはできません。すなわち、 \(c\) のみを異符号とすることはできません。</li>
       </ul>
     </ul>
-    <p>以上を整理すると次のような表になります。</p>
+    <p>実際には \(n=0\) および \(|n|≧3\) のときは方程式を満たす正の整数の組はありませんから、 \(n\) が偶数のときとは \(n=±2\) の場合を、 \(n\) が奇数のときとは \(n=±1\) の場合を指すことになります。以上を整理すると次の表のようになります。</p>
     <figure class="numbertable">
-      <table class="style1">
-        <tr><th>\(n\)</th><th>\(x\)</th><th>\(y\)</th><th>\(z\)</th><th>備考</th></tr>
-        <tr><th rowspan="8">\(n=2m\)<br>\(n\)は正の偶数</th><td>\(a\)</td><td>\(b\)</td><td>\(c\)</td><td></td></tr>
-        <tr><td>\(-a\)</td><td>\(b\)</td><td>\(c\)</td><td></td></tr>
-        <tr><td>\(a\)</td><td>\(-b\)</td><td>\(c\)</td><td></td></tr>
-        <tr><td>\(-a\)</td><td>\(-b\)</td><td>\(c\)</td><td></td></tr>
-        <tr><td>\(-a\)</td><td>\(-b\)</td><td>\(-c\)</td><td></td></tr>
-        <tr><td>\(-a\)</td><td>\(b\)</td><td>\(-c\)</td><td></td></tr>
-        <tr><td>\(a\)</td><td>\(-b\)</td><td>\(-c\)</td><td></td></tr>
-        <tr><td>\(-a\)</td><td>\(-b\)</td><td>\(-c\)</td><td></td></tr>
-        <tr><th rowspan="8">\(n=2m\)<br>\(n\)は正の偶数</th><td>\(a\)</td><td>\(b\)</td><td>\(c\)</td><td></td></tr>
-        <tr><td>\(-a\)</td><td>\(-b\)</td><td>\(-c\)</td><td></td></tr>
-        <tr><td>\(c\)</td><td>\(-a\)</td><td>\(b\)</td><td></td></tr>
-        <tr><td>\(-c\)</td><td>\(a\)</td><td>\(-b\)</td><td></td></tr>
-        <tr><td>\(c\)</td><td>\(-b\)</td><td>\(a\)</td><td></td></tr>
-        <tr><td>\(-c\)</td><td>\(b\)</td><td>\(-a\)</td><td></td></tr>
+      <table class="style1" width="896">
+        <tr class="border-bottom-bold"><th>解のパターン</th>
+          <th>\(x\)</th><th>\(y\)</th><th>\(z\)</th><th>等式</th>
+            <th>\(n\) が偶数<br>\(n=±2\)</th><th>\(n\) が奇数<br>\(n=±1\)</th><th>\(n=0,\)<br>\(|n|≧3\)</th></tr>
+        <tr class="border-top-bold"><th rowspan="8">移項せずに<br>符号を反転
+         </th><td>\(+a\)</td><td>\(+b\)</td><td>\(+c\)</td><th>\((+a)^n+(+b)^n=(+c)^n\)</th>
+            <td class="good">成立</td><td class="good">成立</td>
+            <td rowspan="12" class="bad">不成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(+b\)</td><td>\(+c\)</td><th>\((-a)^n+(+b)^n=(+c)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(+a\)</td><td>\(-b\)</td><td>\(+c\)</td><th>\((+a)^n+(-b)^n=(+c)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(-b\)</td><td>\(+c\)</td><th>\((-a)^n+(-b)^n=(+c)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(+b\)</td><td>\(-c\)</td><th>\((+a)^n+(+b)^n=(-c)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(+b\)</td><td>\(-c\)</td><th>\((-a)^n+(+b)^n=(-c)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(+a\)</td><td>\(-b\)</td><td>\(-c\)</td><th>\((+a)^n+(-b)^n=(-c)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(-b\)</td><td>\(-c\)</td><th>\((-a)^n+(-b)^n=(-c)^n\)</th>
+            <td class="good">成立</td><td class="good">成立</td></tr>
+        <tr class="border-top-bold"><th rowspan="4">移項して得られるもの<br>（解となる場合のみ）
+         </th><td>\(+c\)</td><td>\(-a\)</td><td>\(+b\)</td><th>\((+c)^n+(-a)^n=(+b)^n\)</th>
+            <td class="bad">不成立</td><td class="good">成立</td></tr>
+          <tr><td>\(-c\)</td><td>\(+a\)</td><td>\(-b\)</td><th>\((-c)^n+(+a)^n=(-b)^n\)</th>
+            <td class="bad">不成立</td><td class="good">成立</td></tr>
+          <tr><td>\(+c\)</td><td>\(-b\)</td><td>\(+a\)</td><th>\((+c)^n+(-b)^n=(+a)^n\)</th>
+            <td class="bad">不成立</td><td class="good">成立</td></tr>
+          <tr><td>\(-c\)</td><td>\(+b\)</td><td>\(-a\)</td><th>\((-c)^n+(+b)^n=(-a)^n\)</th>
+            <td class="bad">不成立</td><td class="good">成立</td></tr>
       </table>
-      <figcaption>\((a,b,c)\) から符号の反転により得られる解の一覧（ \(m,a,b,c\) は正の整数）</figcaption>
+      <figcaption>正の整数解 \((a,b,c)\) から符号を変えることにより得られる解の一覧</figcaption>
     </figure>
-    <p></p>
+  </section>
+  <section>
+    <h3>零の解</h3>
+    <p>次に、零について。零の冪 \(0^n\) は \(n&gt;0\) でしか定義されませんので、 \(n≧1\) の場合についてのみ考えます。</p>
+    <ul>
+      <li>\(x=0\) としたとき、方程式は \(0+y^n=z^n\) となり、 \(y=z=a\) （ \(a\) は任意の整数）となります。この \(a\) は零や負の数でも構いません。 \(n\) が偶数である場合は、 \(y=-z=±a\) も解となります。</li>
+      <li>同様に、 \(y=0\) としたときは \(x=z=a\) が解であり、 \(n\) が偶数である場合には \(x=-z=±a\) も解となります。</li>
+      <li>\(z=0\) としたとき、方程式は \(x^n+y^n=0\) となり、移項して \(x^n=-y^n\) となります。 \(n\) が偶数の場合、この等式を満たす \(x,y\) は \(x=y=0\) しかありません。 \(n\) が奇数の場合、 \(x=a,y=-a\) （ \(a\) は任意の整数）となります。 \(x\) と \(y\) は正負が反対であるか、両方とも \(0\) ということです。</li>
+    </ul>
+    <p>以上を整理すると次の表のようになります。解の \(x,y,z\) のいずれかが \(0\) である場合は、他の値が負の数である場合も含めて、これが全てです。</p>
+    <figure class="numbertable">
+      <table class="style1" width="896">
+        <tr class="border-bottom-bold"><th>解のパターン</th>
+          <th>\(x\)</th><th>\(y\)</th><th>\(z\)</th><th>等式</th>
+            <th>\(n\) が正の偶数</th><th>\(n\) が正の奇数</th><th>\(n≦0\)</th>
+        </tr>
+        <tr class="border-top-bold"><th rowspan="1">\(x,y,z\) ともに零
+         </th><td>\(0\)</td><td>\(0\)</td><td>\(0\)</td><th>\(0^n+0^n=0^n\)</th>
+            <td class="good">成立</td><td class="good">成立</td>
+            <td rowspan="13" class="disabled tategaki-one-line">\(0^n\)は定義されない</td></tr>
+        <tr class="border-top-bold"><th rowspan="4">\(x\) のみ零
+         </th><td>\(0\)</td><td>\(+a\)</td><td>\(+a\)</td><th>\(0^n+(+a)^n=(+a)^n\)</th>
+            <td class="good">成立</td><td class="good">成立</td></tr>
+          <tr><td>\(0\)</td><td>\(-a\)</td><td>\(+a\)</td><th>\(0^n+(-a)^n=(+a)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(0\)</td><td>\(+a\)</td><td>\(-a\)</td><th>\(0^n+(+a)^n=(-a)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(0\)</td><td>\(-a\)</td><td>\(-a\)</td><th>\(0^n+(-a)^n=(-a)^n\)</th>
+            <td class="good">成立</td><td class="good">成立</td></tr>
+        <tr class="border-top-bold"><th rowspan="4">\(y\) のみ零
+         </th><td>\(+a\)</td><td>\(0\)</td><td>\(+a\)</td><th>\((+a)^n+0^n=(+a)^n\)</th>
+            <td class="good">成立</td><td class="good">成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(0\)</td><td>\(+a\)</td><th>\((-a)^n+0^n=(+a)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(+a\)</td><td>\(0\)</td><td>\(-a\)</td><th>\((+a)^n+0^n=(-a)^n\)</th>
+            <td class="good">成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(0\)</td><td>\(-a\)</td><th>\((-a)^n+0^n=(-a)^n\)</th>
+            <td class="good">成立</td><td class="good">成立</td></tr>
+        <tr class="border-top-bold"><th rowspan="4">\(z\) のみ零
+         </th><td>\(+a\)</td><td>\(+a\)</td><td>\(0\)</td><th>\((+a)^n+(+a)^n=0^n\)</th>
+            <td class="bad">不成立</td><td class="bad">不成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(+a\)</td><td>\(0\)</td><th>\((-a)^n+(+a)^n=0^n\)</th>
+            <td class="bad">不成立</td><td class="good">成立</td></tr>
+          <tr><td>\(+a\)</td><td>\(-a\)</td><td>\(0\)</td><th>\((+a)^n+(-a)^n=0^n\)</th>
+            <td class="bad">不成立</td><td class="good">成立</td></tr>
+          <tr><td>\(-a\)</td><td>\(-a\)</td><td>\(0\)</td><th>\((-a)^n+(-a)^n=0^n\)</th>
+            <td class="bad">不成立</td><td class="bad">不成立</td></tr>
+      </table>
+      <figcaption>\(0\) を含む解の一覧（ \(a\) は正の整数）</figcaption>
+    </figure>
+  </section>
+  <section>
+    <h3>本当の全貌</h3>
+    <p>以上をまとめるとこうなります。</p>
+    <figure class="formula def">
+      <figcaption>方程式 \(x^n+y^n=z^n\) の整数解</figcaption>
+      方程式 \(x^n+y^n=z^n\) の整数解 \((n,x,y,z)\) は次の通り。
+      <ul>
+        <li>\(x,y,z\) がいずれも \(0\) でない解は、\(n=±1,±2\) のときのみ存在する。</li>
+        <ul>
+          <li>そのような4つの \(n\) に対して、互いに素な整数解は、</li>
+          <ul>
+            <li>\((2,k^2-l^2,2kl,k^2+l^2)\quad\)</li>
+            ただし、 \(k,l\) は互いに素で、 \(k&gt;l\) かつ \(k-l\) が奇数である正の整数。
+            <li>\((1,p,q,p+q)\quad\)</li>
+            ただし、 \(p,q\) は互いに素で、 \(p&gt;q\) もしくは \(p=q=1\) なる正の整数。
+            <li>\((-1,s(t+s),t(t+s),st)\quad\)</li>
+            ただし、 \(s,t\) は互いに素で、 \(s&gt;t\) もしくは \(s=t=1\) なる正の整数。
+            <li>\((-2,,,)\quad\)</li>
+          </ul>
+          として全て表せる。
+          <li>互いに素な整数解 \((n,x,y,z)=(n,a,b,c)\) から、任意正の整数 \(r\) を用いて \(x,y,z\) が正の整数である解 \((n,ra,rb,rc)\) が全て得られる。</li>
+          <li>\(x,y,z\) が正の整数である解 \((n,x,y,z)=(n,a,b,c)\) から、 \(x,y,z\) のいずれかが負の整数である解が全て得られる。</li>
+          <ul>
+            <li>\(n=±2\) のとき、 \((n,-a,b,c),(n,a,-b,c),(n,-a,-b,c),(n,a,b,-c),(n,-a,b,-c),(n,a,-b,-c),(n,-a,-b,-c)\)</li>
+            <li>\(n=±1\) のとき、 \((n,-a,-b,-c),(n,c,-a,b),(n,-c,a,-b),(n,c,-b,a),(n,-c,b,-a)\)</li>
+          </ul>
+        </ul>
+        <li>\(x,y,z\) のいずれかが \(0\) である解は、 \(n≧1\) のときのみ存在する。</li>
+        そのような整数解は、 \(m,a\) を正の整数として
+        <ul>
+          <li>\((m,0,0,0),(m,0,a,a),(m,0,-a,-a)\)</li>
+          <li>\((2m,0,-a,a),(2m,0,a,-a)\)</li>
+          <li>\((2m-1,-a,a,0)\)</li>
+        </ul>
+        と表せるものが全て。
+      </ul>
+      ただし、 \(x\) と \(y\) を入れ替えて得られる組み合わせは同一視した。
+    </figure>
+    <p>これで、<em>全ての整数の範囲で</em>方程式 \(x^n+y^n=z^n\) の整数解 \((n,x,y,z)\) が得られました。ようやく全貌が分かり、今度こそめでたしめでたし、となります。お疲れさまでした。</p>
   </section>
 </article>
 <footer>
