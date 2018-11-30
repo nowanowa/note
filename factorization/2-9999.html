@@ -35,22 +35,34 @@ const filt = () => {
     }
   }
 };
-document.addEventListener('DOMContentLoaded', filt);
+document.addEventListener('DOMContentLoaded', () => {
+  filt();
+  const button = document.getElementById('panelonoff');
+  const panel = document.getElementById('panel');
+  button.addEventListener('click', () => {
+    const b = button.className == 'showing';
+    panel.hidden = b;
+    button.className = b ? 'hidden' : 'showing';
+    button.innerHTML = b ? '…' : '×';
+  });
+});
 </script>
 <style>
-table{ color:#aaa; border-collapse:collapse; }
+table{ color:#ccc; border-collapse:collapse; margin-left:auto; margin-right:auto; font-family:sans-serif; font-size:large; line-height:1em; }
 tr:hover{ background:#dfe; }
 td:nth-child(1){ text-align:right; }
-form{ display:block; position:fixed; top:0; right:0; padding:8px; background:rgba(255,255,255,0.5);}
+#panel{ position:fixed; top:0; right:0; padding:8px; background:rgba(255,255,255,0.5);}
+#panelonoff{ position:fixed; top:0; right:0; padding:8px; font-size:large; font-weight:bold; cursor:pointer;}
 </style>
 </head>
 <body>
+<div id="panel">
 <form name="filter" onsubmit="return false;" onchange="filt()">
   <label><input type="checkbox" name="prime" checked>素数</label>
   <label><input type="checkbox" name="composite" checked>合成数</label>
   <br>
   <label><input type="checkbox" name="dist0" checked>n&isin;{2<sup>a</sup>&times;3<sup>b</sup>&times;5<sup>c</sup>|a,b,c&ge;0}</label><br>
-  <b>x</b>=<input type="number" name="border" value="13" style="width:100px;">として<br>
+  <b>x</b>=<input type="number" name="border" value="13" style="width:100px;">として…<br>
   <label><input type="checkbox" name="distle" checked>{n&times;&prod;p<sup>e</sup>|p&ge;7,e&ge;1,&sum;p&le;<b>x</b>}</label><br>
   <label><input type="checkbox" name="distgt" checked>{n&times;&prod;p<sup>e</sup>|p&ge;7,e&ge;1,&sum;p&gt;<b>x</b>}</label><br>
   <fieldset>
@@ -60,6 +72,8 @@ form{ display:block; position:fixed; top:0; right:0; padding:8px; background:rgb
     <label><input type="checkbox" name="dist13" checked>{n&times;13<sup>e</sup>|e&ge;1}</label><br>
   </fieldset>
 </form>
+</div>
+<div id="panelonoff" class="showing">×</div>
 
 <table class="numberlist" style="color:#888;">
 <tr class="prime dist0"><td><span style="color:hsl(300,100%,0.0%);">2</span></td><td> = <span class="factor" style="color:hsl(30,100.0%,50%);">2</span></td></tr>
