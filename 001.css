@@ -148,6 +148,9 @@ aside.notes{
 aside.notes small{
   display:block;
 }
+#index h1{
+  font-size:xx-large;
+}
 #index h2{
   margin-top:2em;
   border:2px dashed #ad2;
