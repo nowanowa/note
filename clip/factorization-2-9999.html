@@ -12,14 +12,14 @@ const filt = () => {
   const trs = document.querySelectorAll('tr');
   const border = Number(flagof['border'].value);
   const hide = {};
-  ['prime','composite','dist0','dist7','dist11','dist13'].forEach((key) => {
+  ['prime','composite','dist0','dist7','dist11','dist13','dist17'].forEach((key) => {
     hide[key] = !flagof[key].checked;
   });
   const le = !flagof['distle'].checked;
   const gt = !flagof['distgt'].checked;
   for (flag of flagof) flag.disabled = 0;
   if (le || gt) {
-    for (i of [7,11,13]) {
+    for (i of [7,11,13,17]) {
       if ((le && i <= border) || (gt && i > border)) flagof['dist'+i].disabled = 1;
     }
   }
@@ -73,6 +73,7 @@ td:nth-child(1){ text-align:right; }
     <label><input type="checkbox" name="dist7" checked>{n&times;7<sup>e</sup>|e&ge;1}</label><br>
     <label><input type="checkbox" name="dist11" checked>{n&times;11<sup>e</sup>|e&ge;1}</label><br>
     <label><input type="checkbox" name="dist13" checked>{n&times;13<sup>e</sup>|e&ge;1}</label><br>
+    <label><input type="checkbox" name="dist17" checked>{n&times;17<sup>e</sup>|e&ge;1}</label><br>
   </fieldset>
 </form>
 </div>
