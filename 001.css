@@ -14,7 +14,7 @@ footer{
 }
 header{
   background:#efc;
-  margin-top:-10px;
+  margin-top:-8px;
   padding:20px;
 }
 header time{
@@ -65,6 +65,27 @@ em{
 .proof{
   background:#efe;
   padding:1em;
+}
+.code{
+  position:relative;
+  background:#444;
+  color:#fff;
+  line-height:1.4em;
+  padding:1em;
+}
+.code pre{
+  margin:0;
+}
+.code figcaption{
+  position:absolute;
+  top:0;
+  padding:2px 1em;
+  background:#666;
+  color:#fff;
+}
+*:not(pre)>code{
+  background:#dde;
+  padding:3px;
 }
 table{
   border-collapse:collapse;
@@ -123,5 +144,25 @@ a.notes{
 aside.notes{
   border-top:1px dashed #314;
   line-height:1.3em;
+}
+aside.notes small{
+  display:block;
+}
+#index h2{
+  margin-top:2em;
+  border:2px dashed #ad2;
+  padding:16px;
+  background:#efc;
+}
+nav.mokuji{
+  display:inline-block;
+  background:#efc;
+}
+#mokuji{
+  padding-right:2em;
+}
+#mokuji:before{
+  content:'目次';
+  font-weight:bold;
 }
 
