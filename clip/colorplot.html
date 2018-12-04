@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+<meta name="keywords" content="数学,複素関数" />
+<meta name="description" content="複素関数の値を色で表したグラフを描く簡易ツール" />
+<meta property="og:url" content="https://nowanowa.github.io/note/clip/colorplot.html" />
+<meta property="og:title" content="複素関数を色でプロットするツール" />
+<meta property="og:description" content="複素関数の値を色で表したグラフを描く簡易ツール" />
+<meta property="og:image" content="https://nowanowa.github.io/note/img/mand10z.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@3nowanowa40" />
+<title>複素関数を色でプロットするツール</title>
+<link rel="stylesheet" href="../001.css">
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+<style>
+.tool{
+  line-height:1.1em;
+}
+canvas{
+  vertical-align:middle;
+}
+label{
+  display:inline-block;
+}
+#message{
+  background:#ff8;
+  color:#f44;
+  padding:5px;
+}
+#ctrl{
+  color:#228;
+  font-size:small;
+  cursor:pointer;
+}
+#ctrl:hover{
+  text-decoration:underline;
+}
+#usablelist dl{
+  margin-top:4px;
+  margin-bottom:8px;
+}
+ul.np{
+  list-style:none;
+  padding-left:0;
+}
+.gallery img{
+  width:128px;
+  height:128px;
+}
+</style>
+</head>
+<body>
+  <section class="tool">
+    <h2>複素関数を色でプロットするツール<a href="#about" style="font-size:small">（説明）</a></h2>
+    <p>f(z) = <span id="formula"></span></p>
+    <span class="dmtyp22"><span id="domain"><canvas id="zahlenebeneD"></canvas> → </span></span>
+    <canvas id="zahlenebeneC"></canvas>
+    <form name="domain" onSubmit="return false;" class="dmtyp22"><label><input type="checkbox" name="domain" checked>\(\mathrm{id}_\mathbb{C}(z)=z\) を並べて表示</label></form>
+    <p id="message"></p>
+    <form name="def" onSubmit="return false;">
+      <button name="plot">plot</button>
+      <dl>
+        <dt>関数：</dt>
+        <dd class="dmtyp12 dmtyp13"><label>\(f_\mathbb{R}(z)=\) <input type="text" name="fun" value="sin(z)" size="32"></label></dd>
+        <dd class="dmtyp22 dmtyp12"><label>\(f_\mathbb{C}(z)=\) <input type="text" name="func" value="-log(z^5)" size="32"></label></dd>
+        <dd class="dmtyp23 dmtyp13"><label>\(f_r(z)=\) <input type="text" name="funR" value="tan(abs(z-1))^3" size="32"></label></dd>
+        <dd class="dmtyp23 dmtyp13"><label>\(f_g(z)=\) <input type="text" name="funG" value="tan(abs(z-w))^3" size="32"></label></dd>
+        <dd class="dmtyp23 dmtyp13"><label>\(f_b(z)=\) <input type="text" name="funB" value="tan(abs(z+w+1))^3" size="32"></label></dd>
+        <dd class="dmtyp22 dmtyp23">変数には複素数<code>z</code>のほか、\(z = x+i y = r\mathrm{e}^{i t}\) としたときの実数<code>x</code>、<code>y</code>、<code>r</code>、<code>t</code>が使えます。tの範囲は \(-\pi ≦ t ≦ \pi\) です。</dd>
+        <dd class="dmtyp12 dmtyp13">変数は実数<code>z</code>です。</dd>
+        <dd><code>2*z</code>や<code>3*i</code>など、乗算には<code>*</code>が必須です。</dd>
+        <dd>使用可能な定数と関数は次の通り：<span id="ctrl">隠す</span></dd>
+        <dd><ul id="usablelist">
+          <li>定数</li>
+          <dl>
+            <dt><code>e</code></dt>
+            <dd>自然対数の底 \(\mathrm{e}=2.71828...\) です。</dd>
+            <dt><code>pi</code></dt>
+            <dd>円周率 \(\pi=3.14159...\) です。</dd>
+            <dt><code>i</code></dt>
+            <dd>虚数単位 \(i=\sqrt{-1}\) です。</dd>
+            <dt><code>w</code></dt>
+            <dd>\(w=-\frac{1}{2}+\frac{\sqrt{3}}{2}i\) です。これは \(w^3=1\) の解の1つで、他の2つは \(1,-w-1\) と表せます。</dd>
+          </dl>
+          <li>複素数のプロパティ</li>
+          <dl>
+            <dt><code>re(c)</code></dt>
+            <dd>複素数cの実部を返します。c=<code>z</code>の場合、<code>x</code>と等値です。</dd>
+            <dt><code>im(c)</code></dt>
+            <dd>複素数cの虚部を返します。c=<code>z</code>の場合、<code>y</code>と等値です。</dd>
+            <dt><code>abs(c)</code></dt>
+            <dd>複素数cの絶対値を返します。c=<code>z</code>の場合、<code>r</code>と等値です。</dd>
+            <dt><code>arg(c)</code></dt>
+            <dd>複素数cの偏角 \(\theta\) を \(-\pi ≦ \theta ≦ \pi\) の範囲で返します。c=<code>z</code>の場合、<code>t</code>と等値です。負の実軸に沿った分岐切断（branch cut）を持ちます（負の実軸上で不連続です）。</dd>
+          </dl>
+          <li>二項演算</li>
+          <dl>
+            <dt><code>+</code>,<code>-</code>,<code>*</code>,<code>/</code></dt>
+            <dd>加減乗除です。</dd>
+            <dt><code>^</code></dt>
+            <dd>複素数冪\(a^b\)です。<code>pow(a,b)</code>も同じ演算です。底aに関してlogと同じ分岐切断を持ちます。</dd>
+          </dl>
+          <li>指数・対数関数</li>
+          <dl>
+            <dt><code>exp(c)</code></dt>
+            <dd>底を \(\mathrm{e}\) とする指数関数 \(\mathrm{e}^c\) です。</dd>
+            <dt><code>log(c)</code></dt>
+            <dd>底を \(\mathrm{e}\) とする自然対数関数 \(\log_\mathrm{e}c\) です。 \(\mathrm{e}^w=c\) を満たす複素数 \(w\) は複数存在し、任意の整数 \(n\) を用いて \(w=\log_\mathrm{e}|c|+i(\arg(c)+2n\pi)\) と表せます。この関数は、それらのうち \(n=0\) である値を返します。そのため、返値の虚部は区間 \([-\pi,\pi]\) に属します。負の実軸に沿った分岐切断を持ちます。</dd>
+            <dt><code>sqrt(c)</code>,<code>cbrt(c)</code></dt>
+            <dd>平方根 \(\sqrt{c}\) と、立方根 \(\sqrt[3]{c}\) です。logと同じ分岐切断を持ちます。</dd>
+          </dl>
+          <li>三角関数とその逆関数</li>
+          <dl>
+            <dt><code>sin(c)</code>,<code>cos(c)</code>,<code>tan(c)</code></dt>
+            <dd>三角関数の正弦 \(\sin c\) 、余弦 \(\cos c\) 、正接 \(\tan c\) です。</dd>
+            <dt><code>asin(c)</code>,<code>acos(c)</code></dt>
+            <dd>逆正弦 \(\sin^{-1}c\) と逆余弦 \(\cos^{-1}c\) です。2つの分岐切断を持ち、実軸の \(|z|&gt;1\) の部分に沿って \(±∞\) へと延びています。</dd>
+            <dt><code>atan(c)</code></dt>
+            <dd>逆正接 \(\tan^{-1}c\) です。2つの分岐切断を持ち、虚軸の \(|z|&gt;1\) の部分に沿って \(±∞i\) へと延びています。</dd>
+          </dl>
+          <li>双曲線関数とその逆関数</li>
+          <dl>
+            <dt><code>sinh(c)</code>,<code>cosh(c)</code>,<code>tanh(c)</code></dt>
+            <dd>双曲線関数の正弦 \(\sinh c\) 、余弦 \(\cosh c\) 、正接 \(\tanh c\) です。</dd>
+            <dt><code>asinh(c)</code></dt>
+            <dd>逆双曲線正弦 \(\sinh^{-1}c\) です。2つの分岐切断を持ち、虚軸の \(|z|&gt;1\) の部分に沿って \(±∞i\) へと延びています。</dd>
+            <dt><code>acosh(c)</code></dt>
+            <dd>逆双曲線余弦 \(\cosh^{-1}c\) です。分岐切断を1つ持ち、 \(1\) から実軸に沿っての負の方向へ \(-∞\) へと延びています。</dd>
+            <dt><code>atanh(c)</code></dt>
+            <dd>逆双曲線正接 \(\tanh^{-1}c\) です。2つの分岐切断を持ち、実軸の \(|z|&gt;1\) の部分に沿って \(±∞\) へと延びています。</dd>
+          </dl>
+          <li>その他の関数（使用には注意が必要です）</li>
+          <dl>
+            <dt><code>zeta(c)</code></dt>
+            <dd>リーマンゼータ関数です。非常に時間が掛かり、特に虚部が負である領域で重いです。また途中で打ち切る影響で、虚部がおよそ-7未満の領域では計算がうまくできず、およそ0を返してしまいます。<a href="https://ja.wikipedia.org/wiki/%E3%83%AA%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%BC%E3%83%BC%E3%82%BF%E9%96%A2%E6%95%B0" target="_blank">Wikipedia</a>で綺麗な画像が見れます。</dd>
+            <dt><code>mand(n,c)</code></dt>
+            <dd>漸化式 \(z_{n+1} = z_n^2 + c, z_0 = 0\) における \(z_n\) の値を返します。<code>n</code>は非負整数です。</dd>
+            <dd>複素数列 \(\{z_n\}\) が \(n \to \infty\) で無限大に発散しない複素数 \(c\) 全体の集合はマンデルブロ集合と呼ばれます。もしも mand(∞,z) が計算できれば、白以外の色でプロットされる領域です。実際には<code>mand(10,z)</code>くらいでそれらしい図形が見えてきます。ただ、nが大きいと（n=10程度でも）計算が乱れやすくなります。</dd>
+            <dt><code>julia(n,c,d)</code></dt>
+            <dd>漸化式 \(z_{n+1} = z_n^2 + c, z_0 = d\) における \(z_n\) の値を返します。<code>n</code>は非負整数です。<code>julia(n,c,0)</code>は<code>mand(n,c)</code>と等価です。大きなnに関しては<code>mand</code>と同様に乱れやすいです。</dd>
+          </dl>
+          <!-- 
+          <li>追加予定の関数（未実装です）</li>
+          <dl>
+            <dt><code>omega(c)</code></dt>
+            <dd>ランベルトのW関数。</dd>
+          </dl>
+          -->
+        </ul></dd>
+        <dt>定義域：</dt>
+        <dd class="dmtyp22 dmtyp23">z = x + i*y として、</dd>
+        <dd class="dmtyp22 dmtyp23 dmtyp12 dmtyp13"><span id="xl"></span> &lt; <span class="dmtyp22 dmtyp23">\(x\)</span><span class="dmtyp12 dmtyp13">\(z\)</span> &lt; <span id="xg"></span></dd>
+        <dd class="dmtyp22 dmtyp23"><span id="yl"></span> &lt; \(y\) &lt; <span id="yg"></span></dd>
+        <dt class="dmtyp12 dmtyp13">実数部の値域：</dt>
+        <dd class="dmtyp12 dmtyp13"><span id="fl"></span> &lt; \(f_\mathbb{R}(z)\) &lt; <span id="fg"></span></dd>
+        <dd style="margin-top:8px;margin-bottom:4px;">定義域は以下のパラメーターから決定されます。</dd>
+        <dd>
+          <dl>
+            <dt>画像サイズ：</dt>
+            <dd>
+              <label>width=<input type="number" name="width" value="256">px,</label>
+              <label>height=<input type="number" name="height" value="256">px</label>
+            </dd>
+            <dt>1ピクセルあたりの差分：</dt>
+            <dd>
+              <label>Δx/1px=<input type="text" name="dx" value="0.05">,</label>
+              <label>Δy/1px=<input type="text" name="dy" value="0.05"></label><br>
+              <label><input type="checkbox" name="dxeqdy" value="equal" checked>縦と横の単位長を等しくする</label><br>
+            </dd>
+            <dt>平行移動：</dt>
+            <dd>
+              <label>x軸方向に<input type="text" name="ox" value="0">,</label>
+              <label>y軸方向に<input type="text" name="oy" value="0"></label>
+            </dd>
+          </dl>
+        </dd>
+        <dt>おまけ：</dt>
+        <dd> \(\mathbb{C}→\mathbb{C}\) 以外の関数でも遊べます。ただし簡易な実装であり、x-y平面のグラフについては点と点の間の補間をしないため飛び飛びになることがあります。</dd>
+        <dd>
+          <ul class="np">
+            <li><label><input type="radio" name="type" value="22" checked>\(\mathbb{C}→\mathbb{C}\)</label></li>
+            <li><label><input type="radio" name="type" value="23">\(\mathbb{C}→\mathbb{R}^3\)</label>（実数の3つ組をRGBに対応させます）</li>
+            <li><label><input type="radio" name="type" value="12">\(\mathbb{R}→\mathbb{R}×\mathbb{C}\)</label>（x-y平面のグラフを複素数で色塗りします）</li>
+            <li><label><input type="radio" name="type" value="13">\(\mathbb{R}→\mathbb{R}×\mathbb{R}^3\)</label>（x-y平面のグラフをRGBで色塗りします）</li>
+          </ul>
+        </dd>
+      </dl>
+    </form>
+  </section>
+  <hr>
+  <section id="about">
+    <h2>説明</h2>
+
+    <h3>これは何？</h3>
+    <p>複素関数を座標平面への着色としてプロットするツールです。定義域を表す座標平面の各点に、関数の値を表す色をプロットします。</p>
+    <p>なお、計算時間や精度についての最適化は行っていないので（たとえば複素関数は定義通りの式のまま実装されています）、応答が遅い、誤差で数値がおかしいなどの不具合が起こることがあります。あらかじめご了承ください。</p>
+    <figure class="gallery">
+      <figcaption>プロットの例</figcaption>
+      <figure><img src="../img/z.png"><figcaption>\(z\)</figcaption></figure>
+      <figure><img src="../img/sin.png"><figcaption>\(\sin(z)\)</figcaption></figure>
+      <figure><img src="../img/log.png"><figcaption>\(\log(z)\)</figcaption></figure>
+      <figure><img src="../img/exp.png"><figcaption>\(\mathrm{e}^z\)</figcaption></figure>
+      <figure><img src="../img/z^3-1.png"><figcaption>\(z^3-1\)</figcaption></figure>
+    </figure>
+
+    <h3>色の決め方</h3>
+    <p>複素数の値に対して、絶対値から輝度、偏角から色相を決めて、HSL色空間で表します。彩度は100%で固定です。偏角から色相へは単純なラジアンから度への変換ですが、絶対値から輝度へは値の範囲が異なるので、次の関数 \(L:[0,∞)→[0\%,100\%)\) で変換をします。</p>
+    <p>\(L(r)=\begin{cases}
+      \frac{1}{2}r^{\log_2\frac{\mathrm{e}}{4}}×100\% & (0≦r≦1)\\
+      (1-\frac{1}{2\log_2(\sqrt{r}+1)})×100\% & (1&lt;r)
+    \end{cases}\)</p>
+    <p>例えば、関数 \(f(z)=z^2\) は \(z=0+1\mathrm{i}\) のとき \(f(z)=-1=1\mathrm{e}^{\mathrm{i}\pi}\) です。 \(\pi=180°,L(1)=50\%\) ですから、点 \((0,1)\) に \((H,S,L)=(180°,100\%,50\%) \) の色をプロットすることになります。</p>
+    <p>おまけとして、3つの実数から色を決めるものも実装しました。各関数の実部の値を次の関数 \(R:(-∞,∞)→(0,256)\) で変換した後、3つの値の組 \((R,G,B)\) をRGB色空間に対応させます。</p>
+    <p>\(R(x)=\begin{cases}
+      \frac{x}{|x|}(1-\frac{1}{2\log_2(|x|+2)})×256
+    \end{cases}\)</p>
+
+    <h3>式の入力について</h3>
+    <p><code>sin(z+pi)*exp(z^2)-i</code>のように入力してください。入力フォームで一覧した通りの変数・定数・記号・関数が使えます。スペースや、大文字小文字の違い、括弧の違い（<code>()</code>,<code>{}</code>,<code>[]</code>の3種類）は無視されます。全角文字は使えません。括弧の数のチェックなどはしていないので、きちんと閉じられているかなどは自分で確認してください。</p>
+    <h4>「分岐切断」とは</h4>
+    <p>複素数の偏角 <code>arg(z)</code> は \(-\pi ≦ \theta ≦ \pi\) の範囲<a class="notes" href="#note1">*1</a>で値を返すため、負の実軸を横切るときに値が \(2\pi\) だけ飛び、連続ではありません。このように不連続となる曲線を<dfn>branch cut（分岐切断）</dfn>といいます（「分岐切断」という呼称は<a href="https://docs.python.org/ja/3/library/cmath.html" target="_blank">Python複素関数ライブラリのリドキュメント</a>で使われていました）。<code>log</code>は<code>arg</code>に依存するため同様の分岐切断を持ち、平方根・立方根・逆三角関数・逆双曲線関数は定義の中に<code>log</code>があるため、やはり分岐切断が生じます。</p>
+    <p></p>
+    <p><code>arg(c)+2*pi</code>とすれば \(2\pi\) だけ大きい偏角を得られることから、<code>log(c)+i*2*pi</code>などとすることで、<code>log</code>の別の分岐が得られます。</p>
+    <p></p>
+    <aside class="notes">
+      <small id="note1">*1 普通の数学なら片方が \(&lt;\) になりますが、浮動小数点数の<code>-0</code>を使うことにより、たとえば \(-1-0i\) の偏角を<code>-3.141592653589793</code>とすることができます。</small>
+    </aside>
+
+    <h3>参考ウェブサイト</h3>
+    <p>実装にあたって参考にした情報（の一部）です。</p>
+    <dl>
+      <dt><a href="https://docs.python.org/ja/3/library/cmath.html" target="_blank">cmath --- 複素数のための数学関数 — Python 3.7.1 ドキュメント</a></dt>
+      <dt><a href="https://blog.miz-ar.info/2016/08/branch-cuts-of-inv-hyp-functions-and-inv-trig-functions/" target="_blank">逆双曲線関数と逆三角関数の branch cut|雑記帳</a></dt>
+      <dd>複素関数の実装で参考にしました。</dd>
+      <dt><a href="https://hfuji.hatenablog.jp/entry/2016/09/24/223451" target="_blank">シンプルな数式のパーサー（操車場アルゴリズム） - 藤 遥のブログ</a></dt>
+      <dt><a href="https://ja.wikipedia.org/wiki/%E6%93%8D%E8%BB%8A%E5%A0%B4%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0" target="_blank">操車場アルゴリズム - Wikipedia</a></dt>
+      <dd>入力された数式を実際に計算できる形に字句解析・構文解析する方法は、Wikipediaに掲載されている操車場アルゴリズムをそのまま実装しました。</dd>
+      <dt><a href="http://tsujimotter.hatenablog.com/entry/riemann-zeta-function" target="_blank">リーマンのゼータ関数で遊び倒そう (Ruby編) - tsujimotterのノートブック</a></dt>
+      <dd>ゼータ関数はこのページの定義式で実装しました。</dd>
+      <dt><a href="" target="_blank"></a></dt>
+      <dd></dd>
+    </dl>
+  </section>
+  <footer>
+    <a href="../">ホーム</a>
+  </footer>
+<script>
+//*************************************************************************
+//Complexクラスの定義
+class Complex {
+  constructor(x,y) {
+    this.re = x;
+    this.im = y;
+  }
+  abs() {
+    return Math.hypot(this.re, this.im);
+  }
+  arg() {
+    return Math.atan2(this.im, this.re);
+  }
+  polar() {
+    return [this.abs(), this.arg()];  
+  }
+  toString() {
+    const x = this.re;
+    const y = this.im;
+    return (y === 0) ? x : (x === 0) ? y + '* i' : x + (y < 0 ? ' - ' + (-y) : ' + ' + y) + ' * i';
+  }
+}
+//定数
+Complex.Z = new Complex(0,0); //zero
+Complex.U = new Complex(1,0); //unit
+Complex.W = new Complex(-1/2,Math.sqrt(3)/2); //w^3=1
+Complex.I = new Complex(0,1); //imaginary unit
+['PI','E','LN2','LN10','LOG2E','LOG10E','SQRT2','SQRT1_2'].forEach(function(v){
+  Complex[v] = new Complex(Math[v],0);
+});
+//new Complex by polar
+Complex.rect = function(r,t){
+  return (r == 0) ? Complex.Z : new Complex(r * Math.cos(t), r * Math.sin(t));
+};
+//関数
+[
+  ['equals', (a,b) => (a.re === b.re && a.im === b.im)],
+  ['add', (a,b) => new Complex(a.re + b.re, a.im + b.im)],
+  ['sub', (a,b) => new Complex(a.re - b.re, a.im - b.im)],
+  ['mul', (a,b) => new Complex(a.re*b.re - a.im*b.im, a.im*b.re + a.re*b.im)],
+  ['div', (a,b) => {
+    const d = b.re * b.re + b.im * b.im;
+    return new Complex((a.re*b.re + a.im*b.im)/d, (a.im*b.re - a.re*b.im)/d);
+  }],
+  ['pow', (a,b) => {
+    const r = a.abs();
+    const t = a.arg();
+    const x = b.re;
+    const y = b.im;
+    const rr = Math.pow(r,x) * Math.exp(-1 * t * y);
+    const tt = x * t + y * Math.log(r);
+    return r === 0 ? Complex.Z : Complex.rect(rr,tt);
+  }],
+].forEach(function(v){
+  Complex[v[0]] = (a,b) => {
+    if (a instanceof Complex && b instanceof Complex) {
+      return v[1](a,b);
+    } else {
+      return new TypeError();
+    }
+  };
+});
+Complex.repmul = (a,n) => {
+  if (a instanceof Complex && Number.isInteger(n)) {
+    if (n > 0) {
+      return Complex.mul(Complex.repmul(a, n-1), a);
+    } else if (n < 0) {
+      return Complex.div(Complex.repmul(a, n+1), a);
+    } else {
+      return Complex.U;
+    }
+  } else {;
+    return new TypeError();
+  }
+};
+[
+  ['neg',(x) => Complex.sub(Complex.Z,x)],
+  ['inv',(x) => Complex.div(Complex.U,x)],
+  ['log',(x) => new Complex(Math.log(x.abs()), x.arg())],
+  ['exp',(x) => Complex.rect(Math.exp(x.re), x.im)],
+  ['sqrt',(x) => Complex.rect(Math.sqrt(x.abs()), x.arg()/2)],
+  ['cbrt',(x) => Complex.rect(Math.cbrt(x.abs()), x.arg()/3)],
+  ['sin',(x) => new Complex(Math.sin(x.re) * Math.cosh(x.im), Math.cos(x.re) * Math.sinh(x.im))],
+  ['cos',(x) => new Complex(Math.cos(x.re) * Math.cosh(x.im), - Math.sin(x.re) * Math.sinh(x.im))],
+  ['sinh',(x) => new Complex(Math.sinh(x.re) * Math.cos(x.im), Math.cosh(x.re) * Math.sin(x.im))],
+  ['cosh',(x) => new Complex(Math.cosh(x.re) * Math.cos(x.im), Math.sinh(x.re) * Math.sin(x.im))],
+  ['tan', x => Complex.div(Complex.sin(x),Complex.cos(x))],
+  ['tanh',x => Complex.div(Complex.sinh(x),Complex.cosh(x))],
+  ['asin',  x => Complex.mul(Complex.I,Complex.log(Complex.sub(Complex.sqrt(Complex.sub(Complex.U,Complex.mul(x,x))),Complex.mul(Complex.I,x))))],
+  ['acos',  x => Complex.mul(Complex.I,Complex.log(Complex.sub(x,Complex.mul(Complex.I,Complex.sqrt(Complex.sub(Complex.U,Complex.mul(x,x)))))))],
+  ['asinh', x => Complex.log(Complex.add(Complex.sqrt(Complex.add(Complex.mul(x,x),Complex.U)),x))],
+  ['acosh', x => Complex.log(Complex.add(x,Complex.mul(Complex.sqrt(Complex.add(x,Complex.U)),Complex.sqrt(Complex.sub(x,Complex.U)))))],
+  ['atan',  x => Complex.div(Complex.log(Complex.div(Complex.sub(Complex.I,x),Complex.add(Complex.I,x))),new Complex(0,2))],
+  ['atanh', x => Complex.div(Complex.log(Complex.div(Complex.add(Complex.U,x),Complex.sub(Complex.U,x))),new Complex(2,0))],
+].forEach(function(v){
+  Complex[v[0]] = (x) => {
+    if (x instanceof Complex) {
+      return v[1](x);
+    } else {
+      return new TypeError();
+    }
+  };
+});
+//その他の関数
+const my = {
+  //二項係数
+  bc: [],
+  binom: (n,l) => {
+    const k = Math.min(n-l,l);
+    if (my.bc[n] && my.bc[n][k]) {
+      return my.bc[n][k];
+    } else {
+      const val = (k === 0) ? 1 : my.binom(n-1,k-1) * n / k;
+      if (!my.bc[n]) my.bc[n] = [];
+      my.bc[n][k] = val;
+      return val;
+    }
+  },
+  //ゼータ関数
+  zeta: (s) => {
+    if (s instanceof Complex) {
+      const low = 1.0e-3;
+      const upp = 1.0e+8;
+      const inf = 256;
+      let prev = new Complex(100,0);
+      let outer = Complex.Z;
+      const d = Complex.sub(Complex.U,Complex.pow(new Complex(2,0),Complex.sub(Complex.U,s)));
+      for (let m = 1; m < inf; m++) {
+        let inner = Complex.Z;
+        for (let j = 1; j < m; j++) {
+          let a = new Complex((j % 2 === 0 ? -1 : 1) * my.binom(m-1,j-1),0);
+          let b = Complex.pow(new Complex(j,0),Complex.neg(s));
+          inner = Complex.add(inner,Complex.mul(a,b));
+        }
+        let c = new Complex(Math.pow(2,-m),0);
+        inner = Complex.div(Complex.mul(c,inner),d);
+        outer = Complex.add(outer,inner);
+        if (Complex.sub(prev,inner).abs() < low) {
+          break;
+        } else if (outer.abs() > upp) {
+          break;
+        } else {
+          prev = inner;
+        }
+        if (inner.abs() == Infinity || inner.abs() == NaN) {
+          break;
+        }
+      }
+      return outer;
+    } else {
+      return new TypeError();
+    }
+  },
+  //マンデルブロ集合
+  mandelbrot: (m,c) => {
+    if (c instanceof Complex && m instanceof Complex && Number.isInteger(m.re)) {
+      const mand = (n,c) => {
+        if (n > 0) {
+          let zn2 = Complex.pow(mand(n-1,c),new Complex(2,0));
+          let zn1 = Complex.add(zn2,c);
+          return zn1;
+        } else if (n < 0) {
+          let zn2 = Complex.sub(mand(n+1,c),c);
+          let zn1 = Complex.sqrt(zn2);
+          return zn1;
+        } else {
+          return Complex.Z;
+        }
+      };
+      const val = mand(m.re,c);
+      return val;
+    } else {
+      return new TypeError();
+    }
+  },
+  julia: (m,c,z0) => {
+    if (c instanceof Complex && m instanceof Complex && Number.isInteger(m.re)) {
+      const jul = (n,c,z0) => {
+        if (n > 0) {
+          let zn2 = Complex.pow(jul(n-1,c,z0),new Complex(2,0));
+          let zn1 = Complex.add(zn2,c);
+          return zn1;
+        } else if (n < 0) {
+          let zn2 = Complex.sub(jul(n+1,c,z0),c);
+          let zn1 = Complex.sqrt(zn2);
+          return zn1;
+        } else {
+          return z0;
+        }
+      };
+      return jul(m.re,c,z0);
+    } else {
+      return new TypeError();
+    }  
+  },
+  //ランベルトのW関数（予定）
+  zexpz: (z) => Complex.mul(z,Complex.exp(z)),
+  omega: (z) => {return z},
+};
+//*************************************************************************
+//演算子の文字と関数との対応
+const opera = {
+  '+': { n: 2, f: Complex.add },
+  '-': { n: 2, f: Complex.sub },
+  '*': { n: 2, f: Complex.mul },
+  '/': { n: 2, f: Complex.div },
+  '^': { n: 2, f: Complex.pow },
+  'pow': { n: 2, f: Complex.pow },
+  're': { n: 1, f: x => new Complex(x.re, 0) },
+  'im': { n: 1, f: x => new Complex(x.im, 0) },
+  'abs': { n: 1, f: x => new Complex(x.abs(), 0) },
+  'arg': { n: 1, f: x => new Complex(x.arg(), 0) },
+  'pos': { n: 1, f: x => x },
+  'zeta': { n: 1, f: my.zeta },
+  'mand': { n: 2, f: my.mandelbrot },
+  'julia': { n: 3, f: my.julia },
+  'zexpz': { n: 1, f: my.zexpz },
+};
+[
+  'neg','inv','log','exp','sqrt','cbrt',
+  'sin','cos','tan','asin','acos','atan',
+  'sinh','cosh','tanh','asinh','acosh','atanh',
+].forEach(function(v){
+  opera[v] = {n: 1, f: Complex[v] };
+});
+//*************************************************************************
+//文字列から演算命令列への変換
+const parser = (formula) => {
+  //字句解析
+  const token = {
+    num: new RegExp(/^[0-9]+\.?[0-9]*/),
+    wrd: new RegExp(/^[A-Za-z][0-9A-Za-z\._]*/),
+    ope: new RegExp(/^[\+\-\*\/\^]/),
+    lbr: new RegExp(/^[\(\{\[]/),
+    rbr: new RegExp(/^[\)\}\]]/),
+    sep: new RegExp(/^,/),
+  };
+  let wagon = [];
+  let str = formula.replace(/\s/g,'');
+  while (str.length > 0) {
+    let sl = str.length;
+    for (type in token) {
+      let a = str.match(token[type]);
+      if (a) {
+        let w = a[0];
+        str = str.replace(w,'');
+        wagon.push({type:type,str:w});
+      }
+    }
+    if (sl == str.length) {
+      console.log('error: invalid token',str);
+      break;
+    }
+  }
+  const wl = wagon.length;
+  let i;
+  for (i = 0; i < wl; i++) {
+    switch (wagon[i].type) {
+      case 'wrd':
+        wagon[i].type = (/^(?:pi|[a-z])$/i.test(wagon[i].str)) ? 'num' : 'fun';
+        break;
+      case 'ope':
+        if (i === 0 || /ope|fun|lbr|sep/.test(wagon[i-1].type)) {
+          wagon[i].str = (wagon[i].str == '-') ? 'neg' : 'pos';
+        }
+        break;
+    }
+  }
+  //構文解析
+  const lt = (o1,o2) => {
+    const rank = (o) => {
+      if (/\+|\-/.test(o)) return 4;
+      if (/\*|\//.test(o)) return 3;
+      if (/neg|pos/.test(o)) return 2;
+      if (/\^/.test(o)) return 1;
+    };
+    return rank(o1) > rank(o2);
+  }
+  const queue = [];
+  const stack = [];
+  for (i = 0; i < wl; i++) {
+    const item = wagon[i];
+    switch (item.type) {
+      case 'num':
+        queue.push(item);
+        break;
+      case 'sep':
+        while (stack.length > 0 && stack[stack.length-1].type != 'lbr') {
+          queue.push(stack.pop());
+        }
+        break;
+      case 'ope':
+        const o1 = item.str;
+        let top, o2;
+        while ((top = stack[stack.length-1]) && (o2 = top.str) && top.type == 'ope' && ((/[\+\-\*\/]/.test(o1) && !lt(o2,o1)) || lt(o1,o2))) {
+          queue.push(stack.pop());
+        }
+        stack.push(item);
+        break;
+      case 'fun':
+        stack.push(item);
+        break;
+      case 'lbr':
+        stack.push(item);
+        break;
+      case 'rbr':
+        while (stack.length > 0 && stack[stack.length-1].type != 'lbr') {
+          queue.push(stack.pop());
+        }
+        stack.pop();
+        if (stack[stack.length-1] && stack[stack.length-1].type == 'fun') {
+          queue.push(stack.pop());
+        }
+        break;
+    }
+  }
+  while (stack.length > 0) {
+    queue.push(stack.pop());
+  }
+  return queue;
+}
+//*************************************************************************
+//演算命令列とComplex変数を受け取って計算結果をComplexで返す
+const calc = (queue,z) => {
+  const ql = queue.length;
+  let q = [];
+  let a = [];
+  for (i = 0; i < ql; i++) {
+    const item = queue[i];
+    switch (item.type) {
+      case 'num':
+        let n;
+        if ((n = Number(item.str)) || n === 0) {
+          a.push(new Complex(n,0));
+        } else if (/^(?:e|pi|i|w)$/i.test(n = item.str)) {
+          a.push(Complex[n.toUpperCase()]);
+        } else if (/^z$/i.test(n)) {
+          a.push(z);
+        } else if (/^x$/i.test(n)) {
+          a.push(new Complex(z.re,0));
+        } else if (/^y$/i.test(n)) {
+          a.push(new Complex(z.im,0));
+        } else if (/^r$/i.test(n)) {
+          a.push(new Complex(z.abs(),0));
+        } else if (/^t$/i.test(n)) {
+          a.push(new Complex(z.arg(),0));
+        } else {
+          console.log('error: invalid number',item.str);
+          return;
+        }
+        break;
+      case 'fun':
+      case 'ope':
+        let op = opera[item.str];
+        let ag = [];
+        for (let j = 0; j < op.n; j++) {
+          ag.unshift(a.pop());
+        }
+        a.push(op.f.apply(null,ag));
+        break;
+    }
+  }
+  return a[0];
+};
+//複素数からHSL色座標文字列への変換
+const comp2hsl = (comp) => {
+  const r = comp.abs();
+  const t = comp.arg();
+  const h = t * 180 / Math.PI;
+  const s = '100%';
+  const l = (r <= 1 ? Math.pow(r,Math.log2(Math.exp(1))/4) * 50 : 100 - 50 / Math.log2(Math.sqrt(r)+1)) + '%';
+  return 'hsl(hh,ss,ll)'.replace('hh',h).replace('ss',s).replace('ll',l);
+};
+//実数の3つ組からRGB色座標文字列への変換
+const tri2rgb = (tri) => {
+  const r201 = (x) => {
+    const f = (x) => 1 - 1 / Math.log2(x + 2); //Math.atan(x*10);//
+    return (0 <= x ? f(x) : -f(-x))/2 + 1/2;
+  };
+  const r = r201(tri[0]) * 256;
+  const g = r201(tri[1]) * 256;
+  const b = r201(tri[2]) * 256;
+  return 'rgb(rr,gg,bb)'.replace('rr',r).replace('gg',g).replace('bb',b);
+};
+//プロット
+const plot = () => {
+  const current = document.getElementById('currentCanvas');
+  if (current) current.parentNode.removeChild(current);
+  reflect();
+  const target = document.getElementById('zahlenebeneC');
+  target.hidden = false;
+
+  const type = document.forms.def.type.value;
+  const d = Math.floor(type / 10);
+  const c = type % 10;
+
+  const cw = target.width || 1;
+  const ch = target.height || 1;
+  const ctxC = target.getContext('2d');
+  const dx = document.forms.def.dx.value;
+  const dy = document.forms.def.dy.value;
+  const ox = document.forms.def.ox.value;
+  const oy = document.forms.def.oy.value;
+  const domain = document.getElementById('zahlenebeneD');
+  const ctxD = domain.getContext('2d');
+
+  const formulaC = document.forms.def.func.value;
+  const queueC = parser(formulaC);
+  const formula = document.forms.def.fun.value;
+  const queue = parser(formula);
+  const formulaR = document.forms.def.funR.value;
+  const formulaG = document.forms.def.funG.value;
+  const formulaB = document.forms.def.funB.value;
+  const queueR = parser(formulaR);
+  const queueG = parser(formulaG);
+  const queueB = parser(formulaB);
+
+  try {
+    for (let cx = 0; cx < cw; cx++) {
+      if (d == 2) {
+        for (let cy = 0; cy < ch; cy++) {
+          let x = +(cx - cw/2) * dx - ox;
+          let y = -(cy - ch/2) * dy - oy;
+          let z = new Complex(x,y);
+          let w, color, rgb = [];
+          if (c == 2) {
+            ctxD.fillStyle = comp2hsl(z);
+            ctxD.fillRect(cx,cy,1,1);
+            w = calc(queueC, z);
+            color = comp2hsl(w);
+          } else if (c == 3) {
+            rgb[0] = calc(queueR,z).re;
+            rgb[1] = calc(queueG,z).re;
+            rgb[2] = calc(queueB,z).re;
+            color = tri2rgb(rgb);
+          }
+          ctxC.fillStyle = color;
+          ctxC.fillRect(cx,cy,1,1);
+          if (cy > 2048) {
+            alert(cy);
+          }
+        }
+        if (cx > 2048) {
+          alert(cx);
+        }
+      } else if (d == 1) {
+        let x = +(cx - cw/2) * dx - ox;
+        let z = new Complex(x,0);
+        let w, color, rgb = [];
+        if (c == 2) {
+          w = calc(queueC, z);
+          color = comp2hsl(w);
+        } else if (c == 3) {
+          rgb[0] = calc(queueR,z).re;
+          rgb[1] = calc(queueG,z).re;
+          rgb[2] = calc(queueB,z).re;
+          color = tri2rgb(rgb);
+        }
+        let y = calc(queue,z).re;
+        let cy = Math.floor(ch/2 - (y + oy)/dy);
+        if (0 <= cy && cy < ch) {
+          ctxC.fillStyle = color;
+          ctxC.fillRect(cx,cy,2,2);
+        }
+      }
+    }
+    document.getElementById('message').innerHTML = 'completed.';
+    setTimeout(()=>document.getElementById('message').innerHTML='',1000);
+  } catch (e) {
+    document.getElementById('message').innerHTML = e + '<br>もしくは関数の定義式に誤りがあります。';
+  }
+  const cvs = target.cloneNode();
+  cvs.hidden = true;
+  target.parentNode.insertBefore(cvs,target.nextSibling)
+  target.setAttribute('id','currentCanvas');
+  document.getElementById('formula').innerHTML = formulaC;
+};
+//formでの設定内容をcanvas等に反映
+let reflect = function(event){
+  const f = document.forms.def;
+  if (event && /keyup|change/i.test(event.type)) {
+    const dx = f.dx;
+    const dy = f.dy;
+    const eq = f.dxeqdy;
+    const target = (event.target === eq) ? dx : event.target;
+    const other = (target === dx) ? dy : (target == dy) ? dx : undefined;
+    if (other && eq.checked) {
+      other.value = target.value;
+    }
+  }
+  const absx = f.width.value * f.dx.value / 2;
+  const absy = f.height.value * f.dy.value / 2;
+  const ox = f.ox.value;
+  const oy = f.oy.value;
+  document.getElementById('xl').innerHTML = -absx - ox;
+  document.getElementById('xg').innerHTML =  absx - ox;
+  document.getElementById('yl').innerHTML = -absy - oy;
+  document.getElementById('yg').innerHTML =  absy - oy;
+  document.getElementById('fl').innerHTML = -absy - oy;
+  document.getElementById('fg').innerHTML =  absy - oy;
+  const codomain = document.getElementById('zahlenebeneC');
+  codomain.setAttribute('width',f.width.value);
+  codomain.setAttribute('height',f.height.value);
+  const domain = document.getElementById('zahlenebeneD');
+  domain.setAttribute('width',f.width.value);
+  domain.setAttribute('height',f.height.value);
+  const type = f.type.value;
+  const d = Math.floor(type / 10);
+  const c = type % 10;
+  const dom = document.querySelectorAll('[class*="dmtyp"]');
+  for (let i = dom.length; i --> 0;) {
+    let e = dom[i];
+    e.hidden = true;
+    if (e.classList.contains('dmtyp'+type)) {
+      e.hidden = false;
+    }
+  }
+  document.getElementById('formula').innerHTML = '';
+};
+//EventListenerの設定
+document.addEventListener('DOMContentLoaded',()=>{
+  const def = document.forms.def;
+  def.addEventListener('change',reflect);
+  window.addEventListener('keyup',reflect);
+  reflect();
+  const domain = document.forms.domain;
+  const displayD = () => document.getElementById('domain').hidden = !domain.domain.checked;
+  domain.addEventListener('change',displayD);
+  displayD();
+  const ctrl = document.getElementById('ctrl');
+  const displayL = () => {
+    const l = document.getElementById('usablelist');
+    if (l.hidden) {
+      l.hidden = false;
+      ctrl.innerHTML = '隠す'
+    } else {
+      l.hidden = true;
+      ctrl.innerHTML = '一覧を表示'
+    }
+  };
+  ctrl.addEventListener('click',displayL);
+  displayL();
+  def.plot.addEventListener('click',()=>{
+    document.getElementById('message').innerHTML = 'drawing...';
+    setTimeout(plot,256);
+  });
+  plot();
+});
+</script>
+</body>
+</html>
