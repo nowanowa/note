@@ -83,9 +83,13 @@ em{
   background:#666;
   color:#fff;
 }
+code{
+  font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
 *:not(pre)>code{
   background:#dde;
-  padding:3px;
+  border:1px solid #aaa;
+  padding:1px 3px;
 }
 table{
   border-collapse:collapse;
@@ -147,6 +151,19 @@ aside.notes{
 }
 aside.notes small{
   display:block;
+}
+figure.gallery{
+  background:#eee;
+  text-align:center;
+}
+figure.gallery>figcaption{
+  font-size:larger;
+  padding-top:1em;
+}
+figure.gallery figure{
+  display:inline-block;
+  margin:16px;
+  font-size:smaller;
 }
 #index h1{
   font-size:xx-large;
