@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+<meta name="keywords" content="素因数分解" />
+<meta name="description" content="素因数が2,3,5のみである整数を一覧したい" />
+<meta property="og:url" content="https://nowanowa.github.io/note/just768.html" />
+<meta property="og:title" content="キリが良い数字 〜「768」の場合" />
+<meta property="og:description" content="素因数が2,3,5のみである整数を一覧したい" />
+<meta property="og:image" content="https://nowanowa.github.io/note/img/fact-snap1.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@3nowanowa40" />
+<title>たいとる</title>
+<link rel="stylesheet" href="001.css">
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+</head>
+<body>
+<article class="mathtale">
+  <header>
+    <h2>キリが良い数字 〜「768」の場合</h2>
+    <time>2018-12-22</time>
+  </header>
+  <p>一口に「キリが良い」と言っても様々な《キリの良さ》がありますが、今回は \(768\) や \(1080\) のような整数を取り上げます。画面解像度なんかでよく見る数字で、他にも \(480\) 、 \(640\) 、 \(720\) なんかが同類として挙げられます。これらの整数の《キリの良さ》は「素因数が \(2,3,5\) だけである」という点にあります。というわけで、今回は「キリが良い」ことを「 \(n=2^a×3^b×5^c \ (a,b,c ≧ 0)\) と表せる」こととして、「キリが良い」整数の一覧表を作りました。</p>
+  <p>ところで、「素因数が小さな素数だけである」ことを《キリの良さ》とするなら、 \(98=2×7^2\) や \(1331=11^3\) なんかも<em>ある程度は</em>「キリが良い」ということになります（実際、ある程度の《キリの良さ》を私は感じます）。そこで、一般的に正の整数の《キリの良さ》をどうにか評価して、一覧表では段階的に色分けすることにしました。</p>
+  <p>2以上の整数について、それぞれの素因数分解をもとに色分けして出来上がったのが次のような一覧表です（軽量版：<a href="./clip/factorization-2-2407.html">2から2407まで</a>）。</p>
+  <figure class="gallery">
+    <figure><img src="./img/fact-snap1.png"><figcaption>768付近</figcaption></figure>
+    <figure><img src="./img/fact-snap2.png"><figcaption>1080付近</figcaption></figure>
+  </figure>
+  <p>左辺に2以上の整数が、右辺にその素因数分解が並んでいます。左辺の整数リストは、素因数が 2,3,5 だけであるものは黒色、<span style="color:rgb(214,0,214);">他の素因数を持つものは紫色で、</span><span style="color:rgb(255,15,255);">《キリの良さ》から</span><span style="color:rgb(255,36,255);">遠ざかる</span><span style="color:rgb(255,76,255);">ほどに</span><span style="color:rgb(255,97,255);">輝度が</span><span style="color:rgb(255,133,255);">高く</span><span style="color:rgb(255,184,255);">（色が</span><span style="color:rgb(255,199,255);">薄く）</span>なっています。右辺の素因数分解は、小さい素数から順に並べられており、<span style="color:rgb(255,128,0);">2の橙色から </span><span style="color:rgb(224,128,31);">3,</span><span style="color:rgb(195,128,60);">5,</span><span style="color:rgb(179,128,77);">7,</span><span style="color:rgb(157,128,98);">… と</span><span style="color:rgb(149,128,106);">大きくなる</span><span style="color:rgb(136,128,119);">ほどに</span><span style="color:rgb(131,128,124);">彩度が</span><span style="color:rgb(128,128,128);">低く</span>なっています。これにより「キリが良い」数字が見えやすいようになっています。</p>
+  <p>以下に、この表が出来るまでの過程を記録しておきます。</p>
+  <nav class="mokuji"><ol id="mokuji"><script src="./js/mokuji.js"></script></ol></nav>
+  <section>
+    <h3>準備1：《キリの良さ》の定義と評価</h3>
+    <p>素因数が \(2,3,5\) だけである整数の集合を \(Just\) と呼ぶことにします。具体的には \(Just=\{1,2,3,4,5,6,8,9,10,12,15,…\}\) です。ここでは \(1\) も属すことにしておきます。</p>
+    <figure class="formula def">
+      <figcaption>「キリが良い」整数の集合 \(Just\)</figcaption>
+      \[
+        Just = \{2^a×3^b×5^c \ | \ a≧0,\ b≧0,\ c≧0\}
+      \]
+    </figure>
+    <p>一般の正の整数 \(n\) の《キリの良さ》の程度は、次のような関数 \(distance(n)\) によって評価することにします。</p>
+    <figure class="formula def">
+      <figcaption>\(Just\) との《距離感》 \(distance(n)\)</figcaption>
+      整数 \(n\) の素因数分解を \(n=p_1^{e_1}p_2^{e_2}…p_m^{e_m}\) として\[
+        distance(n)=\sum_{p_k≧7} p_k
+      \]
+    </figure>
+    <p>要するに「 \(7\) 以上の素因数の総和」です<a class="notes" href="#note1">*1</a>。具体的には \(distance(98)=7\) や \(distance(1001)=7+11+13=31\) などとなります。7以上の素因数の構成が同じ整数同士では、 \(distance(637)=distance(91)=7+13=20\) のように値が等しくなります。また、 \(n∈Just\) に対しては \(distance(n)=0\) です<a class="notes" href="#note2">*2</a>。</p>
+    <p>この \(distance(n)\) の小ささ、すなわち \(Just\) との《近さ》を、《キリの良さ》とします。<em>\(2,3,5\) の他に持つ素因数が少ないほど、またその素因数が小さい素数であるほど「キリが良い」</em>ということになります。</p>
+    <aside class="notes">
+      <small id="note1">*1 素因数 \(2,3,5\) を特別扱いしています。数の何かしらの性質を調べるためなら「全ての素因数の総和」とすべきところですが、今回は《キリの良さ》という主観的な指標を評価したいため、このように定義しました。</small>
+      <small id="note2">*2 \(distance(n)\) の取りうる値を小さい順に並べると、 \(0,7,11,13,17,18,19,20,23,24,…\) となります。</small>
+    </aside>
+  </section>
+  <section>
+    <h3>準備2：色分けの関数を決める</h3>
+    <p>一覧表では、左辺の整数では「キリが良い数字を見やすく」、右辺の素因数分解では「キリの良さに貢献している素因数が目立つように」、色分けをしたいと考えました。冒頭で書いたように、左辺では素因数が 2,3,5 だけであるものは黒色、<span style="color:rgb(214,0,214);">他の素因数を持つものは紫色で、</span><span style="color:rgb(255,15,255);">《キリの良さ》から</span><span style="color:rgb(255,36,255);">遠ざかる</span><span style="color:rgb(255,76,255);">ほどに</span><span style="color:rgb(255,97,255);">輝度が</span><span style="color:rgb(255,133,255);">高く</span><span style="color:rgb(255,184,255);">（色が</span><span style="color:rgb(255,199,255);">薄く）</span>なるように、右辺では小さい素数から順に、<span style="color:rgb(255,128,0);">2の橙色から </span><span style="color:rgb(224,128,31);">3,</span><span style="color:rgb(195,128,60);">5,</span><span style="color:rgb(179,128,77);">7,</span><span style="color:rgb(157,128,98);">… と</span><span style="color:rgb(149,128,106);">大きくなる</span><span style="color:rgb(136,128,119);">ほどに</span><span style="color:rgb(131,128,124);">彩度が</span><span style="color:rgb(128,128,128);">低く</span>なるようにしました。</p>
+    <p>具体的には、HSL色空間で指定します。左辺では、 \(d=distance(n)\) に応じて \((H,S,L)=(300°,100\%,\min\{96,16\sqrt{d}\}\%)\) としました。輝度は \(0\) から \(\sqrt{d}\) に比例して増加し、 \(d&gt;36\) での定数 \(96\%\) が最大値ということです。</p>
+    <p>右辺では、素因数 \(p\) に応じて \((H,S,L)=(30°,\max\{0,100(1-\frac{\log_e(p-1)}{3})\}\%,50\%)\) としました。彩度は \(p=2\) なら \(100\%\) 、 \(p=3\) なら \(76.9\%\) 、…と \(p\) に応じて減少していき、 \(p&gt;21\) では定数 \(0\%\) となります。</p>
+    <p>これらの関数は、色々な関数で試してみながら決めました。</p>
+  </section>
+  <section>
+    <h3>準備3：素因数分解を得る</h3>
+    <p>一覧表をプログラムで生成するためには、素因数分解もまたコンピュータで扱えるデータでなければいけません。ひとつひとつ手で入力していては日が暮れてしまうので、素因数分解もコンピュータで計算して求めます<a class="notes" href="#note3">*3</a>。</p>
+    <p>素因数分解は、JSON形式で次のようなデータ構造としました。<code>"p"</code>は<dfn>prime factor（素因数）</dfn>、<code>"e"</code>は<dfn>exponent（指数）</dfn>の頭文字です。</p>
+    <figure class="code">
+<pre title="json"><code>
+{
+  "767": [
+    {"p": 13, "e": 1},
+    {"p": 59, "e": 1}
+  ],
+  "768": [
+    {"p": 2, "e": 8},
+    {"p": 3, "e": 1}
+  ],
+  "769": [
+    {"p": 769, "e": 1}
+  ]
+}
+</code></pre>
+    </figure>
+    <p>各整数 \(n\) をフィールド名とする配列を<code>factors</code>としたとき、<code title="javascript">let n = 1; for (f in factors) n *= Math.pow(f.p, f.e);</code>とすれば、<code>n</code>の値が \(n\) となります。</p>
+    <p>なお、実装の都合上 \(0\) および \(1\) のフィールドが存在します。</p>
+    <p>このデータを得るプログラムはpythonで書きました。整数 \(n\) の素因数分解のアルゴリズムは、単純に \(2\) から \(\sqrt{n}+1\) までの整数で順に割っていく方法です。\(0\) から \(n-1\) までの素因数分解の情報を辞書<code>numbers</code>に格納しておくことで、ひとたび \(n =\)<code>i * j</code>と割り切れれば、<code>n = merge(numbers[i], numbers[j])</code>で \(n\) の素因数分解<code>n</code>が得られるようにしました。実際のコードは<a href="https://github.com/nowanowa/prime" target="_blank">github.com/nowanowa/prime</a>に置いてあります。また、出力結果（0から999999までの素因数分解を格納した10個のJSONファイル）も置いてあります。</p>
+    <aside class="notes">
+      <small id="note3">*3 良い感じのデータベースが無いか探しましたが、扱いやすそうなものは見付けられませんでした（一覧にしたhtmlはありましたが）。</small>
+    </aside>
+  </section>
+  <section>
+    <h3>準備完了：一覧表を生成</h3>
+    <p>準備が整ったら、あとは一覧表を生成するだけです。
+次のような関数で、テンプレートとするHTMLと素因数分解データから、10個の一覧表HTMLを生成しました。</p>
+    <figure class="code">
+      <figcaption>soinsu.py</figcaption>
+<pre title="python"><code>
+from io import open
+
+def maketable(dic,inf=2,sup=0):
+  table = ''
+  keys = dic.keys()
+  keys.sort(key = lambda x: int(x))
+  if sup == 0:
+    sup = int(keys[-1])
+  for i in keys:
+    if int(i) &lt; inf:
+      continue
+    if int(i) &gt; sup:
+      break
+    n = dic[i]
+    left = ''
+    right = ''
+    dst = 0
+    pre = 1
+    prime = 1
+    for factor in n:
+      p = factor['p']
+      e = factor['e']
+      if pre == 0 or e != 1:
+        prime = 0
+      col = 0 if p &gt; 21 else 100 * (1 - math.log(p - 1) / 3)
+      sty = 'color:hsl(30,' + str(int(col)) + '%,50%);'
+      right += '' if pre == 1 else ' * '
+      right += '&lt;span class="factor" style="' + sty + '"&gt;' + str(p) + '&lt;/span&gt;'
+      right += '' if e == 1 else '&lt;span class="exponent" style="' + sty + '"&gt;^' + str(e) + '&lt;/span&gt;'
+      dst += 0 if p &lt; 6 else p
+      pre = 0
+    col = 96 if dst &gt; 36 else 96 * math.sqrt(dst) / 6
+    sty = 'color:hsl(300,100%,' + str(int(col)) + '%);'
+    left += '&lt;span style="' + sty + '"&gt;' + i + '&lt;/span&gt;'
+    cls = ('prime' if prime else 'composite') + ' dist' + str(dst)
+    table += '&lt;tr class="' + cls + '"&gt;&lt;td&gt;' + left + '&lt;/td&gt;&lt;td&gt; = ' + right + '&lt;/td&gt;&lt;/tr&gt;\n'
+  table += ''
+  return table
+
+def makehtmls():
+  with open('./factorization-template.html','r',encoding='utf-8') as f:
+    template = f.read()
+  with open('./0.json') as f:
+    j = f.read()
+  dic = json.loads(j)
+  for i in range(10):
+    inf = 2 if i == 0 else i * 10000
+    sup = i * 10000 + 9999
+    r = str(inf) + '-' +str(sup)
+    table = maketable(dic,inf=inf,sup=sup)
+    html = template.replace('__inf__',str(inf)).replace('__sup__',str(sup)).replace('__table__',table)
+    with open('./factorization-'+r+'.html','w',encoding='utf-8') as f:
+      f.write(html)
+    print('dumped '+r)
+
+makehtmls()
+</code></pre>
+    </figure>
+    <p>これによって出力されたのが以下の一覧表たちです。</p>
+    <p>
+      <a href="./clip/factorization-2-9999.html">2-9999</a>
+      <a href="./clip/factorization-10000-19999.html">10000-19999</a>
+      <a href="./clip/factorization-20000-29999.html">20000-29999</a>
+      <a href="./clip/factorization-30000-39999.html">30000-39999</a>
+      <a href="./clip/factorization-40000-49999.html">40000-49999</a>
+      <a href="./clip/factorization-50000-59999.html">50000-59999</a>
+      <a href="./clip/factorization-60000-69999.html">60000-69999</a>
+      <a href="./clip/factorization-70000-79999.html">70000-79999</a>
+      <a href="./clip/factorization-80000-89999.html">80000-89999</a>
+      <a href="./clip/factorization-90000-99999.html">90000-99999</a>
+    </p>
+  </section>
+  <section>
+    <h3>一覧表の操作</h3>
+    <p>生成した一覧表htmlには、表示する数を絞り込める操作パネルを設置しました。分かりにくいですが、「n&isin;{2<sup>a</sup>&times;3<sup>b</sup>&times;5<sup>c</sup>|a,b,c&ge;0}」というのが集合 \(Just\) に属す数のことを指しており、その下、<b>x</b>を指定する部分では \(distance(n)\) が<b>x</b>以下か<b>x</b>超過かの絞り込みをしています。「特に…」内のチェックは、素因数が2,3,5,7である数、素因数が2,3,5,11である数、素因数が2,3,5,13である数、素因数が2,3,5,17である数、をそれぞれ指し示しています。項目たちが指し示す範囲には重なる部分もありますが、<em>チェックを外した条件に当てはまる整数が非表示になる</em>ようにフィルターが掛けられるはずです。</p>
+    <p>言葉だけでは分かりにくいので、いくつかの絞り込みの方法をギャラリーしておきます。</p>
+    <figure class="gallery">
+      <figure><img src="./img/fact-just.png"><figcaption>\(Just\) に属す数（素因数が \(2,3,5\) である数）</figcaption></figure>
+      <figure><img src="./img/fact-2357.png"><figcaption>素因数が \(2,3,5,7\) である数</figcaption></figure>
+      <figure><img src="./img/fact-235711.png"><figcaption>素因数が \(2,3,5,7,11\) である数</figcaption></figure>
+      <figure><img src="./img/fact-prime.png"><figcaption>素数</figcaption></figure>
+    </figure>
+  </section>
+</article>
+<footer>
+  <a href="./">ホームへ</a>
+</footer>
+</body>
+</html>
