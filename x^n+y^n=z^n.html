@@ -33,7 +33,7 @@
     \]を満たす互いに素な正の整数の組 \((x,y,z)\) は存在するか。存在すれば、どのように表せるか。
   </figure>
   <p>なお、 \((x,y,z)\) が方程式の解であるとき、 \(x\) と \(y\) を交換した \((y,x,z)\) も解ですが、これらは同一のものであると見なすことにします。これは、例えば \(n=2\) で \((3,4,5)\) が見つかれば、同じく等式を満たす \((4,3,5)\) を改めて見つける必要はないということです。</p>
-  <nav class="mokuji"><ol id="mokuji"><script src="./mokuji.js"></script></ol></nav>
+  <nav class="mokuji"><ol id="mokuji"><script src="./js/mokuji.js"></script></ol></nav>
   <section>
     <h3>\(n≧3\) のとき</h3>
     <p>冒頭で述べたとおり、フェルマー・ワイルズの定理より、 \(n≧3\) の場合に等式 \(★\) を満たす正の整数の組 \((x,y,z)\) は存在しません。ここでは証明しませんが、「フェルマーの最終定理」をキーワードに調べれば、詳しい解説が見つかると思います。</p>
@@ -342,9 +342,27 @@
     </figure>
     <p>これで、<em>全ての整数の範囲で</em>方程式 \(x^n+y^n=z^n\) の整数解 \((n,x,y,z)\) が得られました。ようやく全貌が分かり、今度こそめでたしめでたし、となります。お疲れさまでした。</p>
   </section>
+  <section>
+    <h3>プロットしてみる</h3>
+    <p>\(n\) ごとに、方程式の解となる \((x,y)\) を座標平面にプロットしてみました。黒色が互いに素な解の点、薄い灰色がその定数倍で、濃い灰色は \(x,y,z\) のいずれかが \(0\) となる解の点です。スライダをいじって \(-3≦n≦4\) の範囲で眺めてみてください。</p>
+    <figure class="gallery" id="plots">
+      <figure>
+        <img src="./img/fermat_n=-3.png" hidden>
+        <img src="./img/fermat_n=-2.png" hidden>
+        <img src="./img/fermat_n=-1.png" hidden>
+        <img src="./img/fermat_n=0.png" hidden>
+        <img src="./img/fermat_n=1.png" hidden>
+        <img src="./img/fermat_n=2.png">
+        <img src="./img/fermat_n=3.png" hidden>
+        <img src="./img/fermat_n=4.png" hidden>
+        <figcaption>n=<span class="msg">2</span><input type="range" min="-3" max="4" step="1" value="2" oninput="parapara('plots','./img/fermat_n='+this.value+'.png',this.value)"></figcaption>
+      </figure>
+      <script src="./js/parapara.js"></script>
+    </figure>
+  </section>
 </article>
 <footer>
-  <a href="./">一覧に戻る</a>
+  <a href="./">ホームへ</a>
 </footer>
 </body>
 </html>
