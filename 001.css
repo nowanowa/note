@@ -165,6 +165,9 @@ figure.gallery figure{
   margin:16px;
   font-size:smaller;
 }
+figure.gallery img{
+  max-width:100%;
+}
 #index h1{
   font-size:xx-large;
 }

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+<meta name="keywords" content="カレンダー,不動点,改元" />
+<meta name="description" content="n/m(n月m日)にその年のn/m(m分のn)が終わる日を探す" />
+<meta property="og:url" content="https://nowanowa.github.io/note/h31-1-11.html" />
+<meta property="og:title" content="平成31年の1/11に平成31年の1/11が終わる" />
+<meta property="og:description" content="n/m(n月m日)にその年のn/m(m分のn)が終わる日を探す" />
+<meta property="og:image" content="https://nowanowa.github.io/note/img/.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@3nowanowa40" />
+<title>平成31年の1/11に平成31年の1/11が終わる</title>
+<link rel="stylesheet" href="001.css">
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+</head>
+<body>
+<article class="mathtale">
+  <header>
+    <h2>平成31年の1/11に平成31年の \(1/11\) が終わる</h2>
+    <time>2019-01-11</time>
+  </header>
+  <p>「1/11」のうち前者は「いちがつじゅういちにち」、後者は「じゅういちぶんのいち」です。平成31年は1月1日から4月30日までの120日間（の予定）ですが、その11分の1が経過するのは（1月1日0時0分0秒からカウントして）<em>1月11日21時49分5秒45</em>であり、「平成31年の1月11日に平成31年の11分の1が終わる」ということになります。</p>
+  <p>この話の元ネタは次のツイートです。</p>
+  <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">今年の8/13が終わったので、すなわち今年の8/13が終わったということになりますね。<br><br>このように、n月m日の間に一年のm分のnが終わる日は、一年365日のうちで8月13日のみです。(うるう年でない場合)<br>うるう年の場合は、4月14日と8月13日の二日のみになります。</p>&mdash; じょの (@jono0819) <a href="https://twitter.com/jono0819/status/631842662891413505?ref_src=twsrc%5Etfw">2015年8月13日</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <p>「カレンダーの不動点」とでも呼べばいいのでしょうか。このことを確認してみましょう。</p>
+  <nav class="mokuji"><ol id="mokuji"><script src="./js/mokuji.js"></script></ol></nav>
+  <section>
+    <h3>365日間ある1年間の場合</h3>
+    <p>まず「元日からの経過日数 \(x\) 」を「 \(n\) 月 \(m\) 日」に変換する関数を用意します。</p>
+    <p></p>
+    <figure class="formula def">
+      <figcaption>元日から \(x\) 日間経過したときの日付 \(n(x)\) 月 \(m(x)\) 日</figcaption>
+      \(x\) は小数でもよいものとします。床関数 \(\lfloor x \rfloor\) は \(x\) を超えない最大の整数を表します。
+      \[
+        n(x) = \begin{cases}
+          1 & 0≦x&lt;31 \\
+          2 & 31≦x&lt;59 \\
+          3 & 59≦x&lt;90 \\
+          4 & 90≦x&lt;120 \\
+          5 & 120≦x&lt;151 \\
+          6 & 151≦x&lt;181 \\
+          7 & 181≦x&lt;212 \\
+          8 & 212≦x&lt;243 \\
+          9 & 243≦x&lt;273 \\
+          10 & 273≦x&lt;304 \\
+          11 & 304≦x&lt;334 \\
+          12 & 334≦x&lt;365 \\
+        \end{cases},
+        \ 
+        m(x) = \begin{cases}
+          \lfloor x-0 \rfloor +1 & 0≦x&lt;31 \\
+          \lfloor x-31 \rfloor +1 & 31≦x&lt;59 \\
+          \lfloor x-59 \rfloor +1 & 59≦x&lt;90 \\
+          \lfloor x-90 \rfloor +1 & 90≦x&lt;120 \\
+          \lfloor x-120 \rfloor +1 & 120≦x&lt;151 \\
+          \lfloor x-151 \rfloor +1 & 151≦x&lt;181 \\
+          \lfloor x-181 \rfloor +1 & 181≦x&lt;212 \\
+          \lfloor x-212 \rfloor +1 & 212≦x&lt;243 \\
+          \lfloor x-243 \rfloor +1 & 243≦x&lt;273 \\
+          \lfloor x-273 \rfloor +1 & 273≦x&lt;304 \\
+          \lfloor x-304 \rfloor +1 & 304≦x&lt;334 \\
+          \lfloor x-334 \rfloor +1 & 334≦x&lt;365 \\
+        \end{cases}
+      \]
+    </figure>
+    <p>この関数を用いると、 \(n(x)≦m(x)\) のとき、 \(365\) 日間の \(\frac{n(x)}{m(x)}\) が経過する日付は、次のように書けます。
+    \[
+      n\left(\frac{365n(x)}{m(x)}\right) 月\ m\left(\frac{365n(x)}{m(x)}\right) 日
+    \]
+    これが \(n(x)月\ m(x)日\) と一致する日を求めたいので、要するに方程式
+    \[
+      x=\frac{365n(x)}{m(x)}
+    \]
+    を解けば良いことになります。右辺を \(f(x)\) とおけば、関数 \(f(x)=\frac{365n(x)}{m(x)}\) の不動点を求めるとも言えます。</p>
+    <p>\(y=f(x)\) のグラフを描いてみますと、次のような形になりました（赤色の離散的なグラフ）。恒等写像 \(y=x\) （青色）も同時に表示しています。</p>
+    <figure class="gallery">
+      <figure><a href="./img/h310111-365.png" target="_blank"><img src="./img/h310111-365.png"></a><figcaption>赤: \(y=\frac{365n(x)}{m(x)}\) 、青: \(y=x\)</figcaption></figure>
+    </figure>
+    <p>8月13日（\(\lfloor x \rfloor = 224\)）に2つのグラフの交点があることが分かります。365日の \(\frac{8}{13}\) が経過するのは<em>8月13日14時46分9秒23</em>です。また、実は2つのグラフは3月15日（\(\lfloor x \rfloor = 73\)）でも接しており、<em>3月15日0時0分0秒</em>に365日の \(\frac{3}{15}(=\frac{1}{5}=73日)\) が経過します。なお、1月19日<a class="notes" href="#note1">*1</a>、2月16日<a class="notes" href="#note2">*2</a>、4月14日<a class="notes" href="#note3">*3</a>あたりも接近して見えますが、これらはギリギリ重なりません。</p>
+    <aside class="notes">
+      <small id="note1">*1 365日の \(1/19\) は1月20日5時3分9秒47、 \(1/20\) は1月19日6時ちょうどであり、ギリギリ重なりません。</small>
+      <small id="note2">*2 365日の \(2/16\) は2月15日15時ちょうどです。</small>
+      <small id="note3">*3 365日の \(4/14\) は4月15日6時51分25秒71です。</small>
+    </aside>
+  </section>
+  <section>
+    <h3>うるう年の場合</h3>
+    <p>2月の日数が異なるのを調整して、あとは同様に計算しますと、次のようなグラフが得られます。</p>
+    <figure class="gallery">
+      <figure><a href="./img/h310111-366.png" target="_blank"><img src="./img/h310111-366.png"></a><figcaption>赤: \(y=\frac{366n'(x)}{m'(x)}\) 、青: \(y=x\)</figcaption></figure>
+    </figure>
+    <p>365日の場合と微妙に異なるグラフになっています。366日間の \(\frac{4}{14}\) が経過するのが<em>4月14日13時42分51秒43</em>、 \(\frac{8}{13}\) が経過するのが<em>8月13日5時32分18秒46</em>となっており、不動点が2つあります。接近しているように見える、1月19日<a class="notes" href="#note4">*4</a>、2月16日<a class="notes" href="#note5">*5</a>、3月15日<a class="notes" href="#note6">*6</a>ではやはり重なっていません。</p>
+    <aside class="notes">
+      <small id="note4">*4 366日の \(1/19\) は1月20日6時18分56秒84、 \(1/20\) は1月19日7時12分0秒であり、重なりません。</small>
+      <small id="note5">*5 366日の \(2/16\) は2月15日18時ちょうどです。</small>
+      <small id="note6">*6 366日の \(3/15\) は3月14日4時48分0秒です。</small>
+    </aside>
+  </section>
+  <section>
+    <h3>2019年の場合</h3>
+    <p>以上は一般的な1年間の場合でしたが、2019年は改元というイベントがあるために、元号で表記した年の長さが365日ではありません。平成31年は4月30日までの120日間、新元号元年は5月1日から始まる245日間です（平成31年=新元号元年=2019年としていずれも365日間を指す、とする流儀もありますが）。</p>
+    <p>平成31年の \(n(x)月m(x)日\) に平成31年（120日間）の \(\frac{n(x)}{m(x)}\) が経過するための条件式は
+    \[
+      x=\frac{120n(x)}{m(x)}
+    \]
+    であり、新元号元年の \(n(x)月m(x)日\) に新元号元年（245日間）の \(\frac{n(x)}{m(x)}\) が経過するための条件式は
+    \[
+      x=120+\frac{245n(x)}{m(x)}
+    \]
+    となります。
+    \[
+      f(x) = \begin{cases}
+        \frac{120n(x)}{m(x)} & 0≦x&lt;120 \\
+        120+\frac{245n(x)}{m(x)} & 120≦x&lt; 365 \\
+      \end{cases}
+    \]のグラフを描いてみると、次のようになりました。</p>
+    <figure class="gallery">
+      <figure><a href="./img/h310111-2019.png" target="_blank"><img src="./img/h310111-2019.png"></a><figcaption>赤: \(y=f(x)\) 、青: \(y=x\)</figcaption></figure>
+    </figure>
+    <p>平成31年では、<em>1月11日21時49分5秒45</em>に平成31年の \(\frac{1}{11}\) が経過し、平成のあいだの不動点はこれが最後となります。新元号になってからは、<em>6月26日12時55分23秒08</em>に新元号元年の \(\frac{6}{26}\) が経過、<em>7月21日16時ちょうど</em>に \(\frac{7}{21}\) 、<em>12月13日3時41分32秒31</em>に \(\frac{12}{13}\) が経過することになります。8月18日<a class="notes" href="#note7">*7</a>と9月16日<a class="notes" href="#note8">*8</a>が惜しいですが、それでも4つも不動点があるのはなかなかワクワクしますね。</p>
+    <p></p>
+    <aside class="notes">
+      <small id="note7">*7 新元号元年245日間の \(8/18\) が過ぎるのは8月17日21時20分0秒です。</small>
+      <small id="note8">*8 新元号元年245日間の \(9/16\) が過ぎるのは9月15日19時30分0秒です。</small>
+    </aside>
+  </section>
+  <section>
+    <h3>まとめ</h3>
+    <p>以上を整理すると次のようになります。</p>
+    <figure class="formula def">
+      <figcaption>カレンダーの不動点（通常の1年間）</figcaption>
+      n/m（n月m日）のうちに1年のn/m（m分のn）が経過する日は、1年365日間のうち
+      <ul>
+        <li>3/15 （0時ちょうどに1年の \(3/15\) が終わる）</li>
+        <li>8/13 （14時46分9秒23に1年の \(8/13\) が終わる）</li>
+      </ul>
+      の2日。<br>
+      うるう年の場合は、1年366日間のうち
+      <ul>
+        <li>4/14 （13時42分51秒43に1年の \(4/14\) が終わる）</li>
+        <li>8/13 （5時32分18秒46に1年の \(8/13\) が終わる）</li>
+      </ul>
+      の2日。
+    </figure>
+    <p>2019年に限っては、次のような不動点も持ちます。</p>
+    <figure class="formula def">
+      <figcaption>カレンダーの不動点（2019年限定）</figcaption>
+      n月m日のうちに「平成31年」のm分のnが経過する日は、120日間のうち
+      <ul>
+        <li>1/11 （21時49分5秒45に平成31年の \(1/11\) が終わる）</li>
+      </ul>
+      の1日のみ。<br>
+      n月m日のうちに「新元号元年」のm分のnが経過する日は、245日間のうち
+      <ul>
+        <li>6/26 （12時55分23秒08に新元号元年の \(6/26\) が終わる）</li>
+        <li>7/21 （16時ちょうどに新元号元年の \(7/21\) が終わる）</li>
+        <li>12/13 （3時41分32秒31に新元号元年の \(12/13\) が終わる）</li>
+      </ul>
+      の3日ある。
+    </figure>
+    <p>これらの日にはぜひ不動をお祝いしたいものですね（？）。</p>
+  </section>
+</article>
+<footer>
+  <a href="./">ホームへ</a>
+</footer>
+</body>
+</html>
