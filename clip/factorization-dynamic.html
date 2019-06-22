@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+<meta name="keywords" content="素因数分解">
+<meta name="description" content="素因数分解の一覧を好きな範囲で見る">
+<title>素因数分解リストを生成します</title>
+<style>
+table{ color:#aaa; border-collapse:collapse; margin-left:auto; margin-right:auto; font-family:sans-serif; font-size:large; line-height:1em; }
+tr:hover{ background:#dfe; }
+td:nth-child(1){ text-align:right; }
+#panel{ position:fixed; top:0; right:0; padding:8px; background:rgba(255,255,255,0.5);}
+#panelonoff{ position:fixed; top:0; right:0; padding:8px; font-size:large; font-weight:bold; cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="panel">
+<form name="filter" onsubmit="return false;" onchange="filt()">
+  <label><input type="checkbox" name="prime" checked="checked">素数</label>
+  <label><input type="checkbox" name="composite" checked="checked">合成数</label>
+  <hr>
+  <label><input type="checkbox" name="dist0" checked="checked">n∈{2<sup>a</sup>×3<sup>b</sup>×5<sup>c</sup>|a,b,c≥0}</label><br>
+  <b>x</b>=<input type="number" name="border" value="18" style="width:72px;">として、 <a href="https://nowanowa.github.io/note/just768.html" target="_blank">[?]</a><br>
+  <label><input type="checkbox" name="distle" checked="checked">{n×∏p<sup>e</sup>|p≥7,e≥1,∑p≤<b>x</b>}</label><br>
+  <label><input type="checkbox" name="distgt" checked="checked">{n×∏p<sup>e</sup>|p≥7,e≥1,∑p&gt;<b>x</b>}</label><br>
+  <fieldset>
+    <legend>特に…</legend>
+    <label><input type="checkbox" name="dist7" checked="checked">{n×7<sup>e</sup>|e≥1}</label><br>
+    <label><input type="checkbox" name="dist11" checked="checked">{n×11<sup>e</sup>|e≥1}</label><br>
+    <label><input type="checkbox" name="dist13" checked="checked">{n×13<sup>e</sup>|e≥1}</label><br>
+    <label><input type="checkbox" name="dist17" checked="checked">{n×17<sup>e</sup>|e≥1}</label><br>
+  </fieldset>
+</form>
+</div>
+<div id="request">
+<form name="request" onsubmit="return false;">
+  <input type="number" name="center" value="65536" min="2" max="1000000" style="width:96px;">を中心に
+  前後<input type="number" name="width" value="1000" min="1" max="20580" style="width:72px;">件
+  を<button name="que" onclick="reque()">表示</button>
+</form>
+</div>
+<div id="panelonoff" class="showing">×</div>
+
+<table class="numberlist"><tbody id="pflist">
+</tbody></table>
+
+<script>
+const reque = () => {
+  const f = document.forms['request'];
+  const c = Number(f.center.value);
+  const w = Number(f.width.value);
+  const inf = Math.max(c - w, 2);
+  const sup = Math.min(c + w, 10**6);
+  document.getElementById('pflist').innerHTML = '';
+  document.title = '素因数分解 ' + inf + '-' + sup;
+  gentable(inf,sup);
+};
+const gentable = (inf,sup) => {
+  if (inf > sup) throw new Error();
+  const d0 = Math.floor(inf / 100000);
+  const d1 = Math.floor(sup / 100000);
+  fetch('https://raw.githubusercontent.com/nowanowa/prime/master/factorization/' + d0 + '.json').then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error();
+    }
+  }).then((numbers) => {
+    const tbody = document.getElementById('pflist');
+    let i, html = '';
+    for (i = inf; i <= sup; i++) {
+      if (!numbers[i]) break;
+      html += gentr(i,numbers[i]);
+    }
+    tbody.innerHTML += html;
+    if (i <= sup) {
+      gentable(i,sup);
+    } else {
+      filt();
+    }
+  });
+};
+const gentr = (num,facs) => {
+  let left = '';
+  let right = '';
+  let dst = 0;
+  let pre = 1;
+  let prime = 1;
+  for (let i = 0; i < facs.length; i++) {
+    const factor = facs[i];
+    const p = Number(factor['p']);
+    const e = Number(factor['e']);
+    if (pre == 0 || e != 1) {
+      prime = 0;
+    }
+    const col = (p > 21) ? 0 : 100 * (1 - Math.log(p - 1) / 3);
+    const sty = 'color:hsl(30,' + Math.floor(col) + '%,50%);';
+    right += (pre == 1) ? '' : ' * ';
+    right += '<span class="factor" style="' + sty + '">' + p + '</span>';
+    right += (e == 1) ? '' : '<span class="exponent" style="' + sty + '">^' + e + '</span>';
+    dst += (p < 6) ? 0 : p;
+    pre = 0;
+  }
+  const col = (dst > 36) ? 96 : 96 * Math.sqrt(dst) / 6;
+  const sty = 'color:hsl(300,100%,' + Math.floor(col) + '%);';
+  left += '<span style="' + sty + '">' + num + '</span>';
+  const cls = (prime ? 'prime' : 'composite') + ' dist' + dst;
+  return '<tr class="' + cls + '"><td>' + left + '</td><td> = ' + right + '</td></tr>\n';
+};
+const filt = () => {
+  const flagof = document.forms['filter'];
+  const trs = document.querySelectorAll('tr');
+  const border = Number(flagof['border'].value);
+  const hide = {};
+  ['prime','composite','dist0','dist7','dist11','dist13','dist17'].forEach((key) => {
+    hide[key] = !flagof[key].checked;
+  });
+  const le = !flagof['distle'].checked;
+  const gt = !flagof['distgt'].checked;
+  for (flag of flagof) flag.disabled = 0;
+  if (le || gt) {
+    for (i of [7,11,13,17]) {
+      if ((le && i <= border) || (gt && i > border)) flagof['dist'+i].disabled = 1;
+    }
+  }
+  for (let i = 0; i < trs.length; i++) {
+    const tr = trs[i];
+    tr.hidden = 0;
+    for (val of tr.classList) {
+      if (hide[val]) tr.hidden = 1;
+    }
+    if (le || gt) {
+      const reg = tr.className.match(/dist(\d+)/);
+      if (reg) {
+        const dist = Number(reg[1]);
+        if ((dist && le && dist <= border) || (gt && dist > border)) tr.hidden = 1;
+      }
+    }
+  }
+};
+document.addEventListener('DOMContentLoaded', () => {
+  filt();
+  const button = document.getElementById('panelonoff');
+  const panel = document.getElementById('panel');
+  button.addEventListener('click', () => {
+    const b = button.className == 'showing';
+    panel.hidden = b;
+    button.className = b ? 'hidden' : 'showing';
+    button.innerHTML = b ? '…' : '×';
+  });
+});
+</script>
+</body></html>
