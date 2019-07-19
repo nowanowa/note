@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+<meta name="keywords" content="累乗数,perfect power">
+<meta name="description" content="2桁以下を底とする累乗数の羅列">
+<title>累乗数の羅列</title>
+<style>
+table{ color:#000; border-collapse:collapse; margin-left:auto; margin-right:auto; font-family:sans-serif; font-size:large; line-height:1em; }
+tr:hover{ background:#fee; }
+td:nth-child(1){ text-align:right; }
+#panel{ position:fixed; top:0; right:0; padding:8px; background:rgba(255,248,248,0.7);}
+#panelonoff{ position:fixed; top:0; right:0; padding:8px; font-size:large; font-weight:bold; cursor:pointer;}
+table{ white-space:nowrap; }
+</style>
+</head>
+<body>
+<div id="panel">
+<form name="request" onsubmit="return false;">
+  2桁までの底 <b>b</b> で表せる累乗数 <b>b<sup>e</sup></b>を<br>
+  4≦<b>b<sup>e</sup></b>≦10<sup><input type="number" name="max" value="16" min="1" max="20" style="width:36px;"></sup>の範囲で列挙します<br>
+  <hr>
+  底が
+  2≦<b>b</b>≦<input type="number" name="sup" value="7" min="2" max="99" style="width:72px;">
+  かつ<br>
+  <b>b</b>≠<input type="text" name="exclude" value="2,3,5,6" style="width:144px;">
+  <small>(カンマ区切り)</small><br>
+  なるものに<button name="que" onclick="reque()">絞り込む</button>
+</form>
+</div>
+<div id="panelonoff" class="showing">×</div>
+
+<table class="numberlist"><tbody id="pplist">
+</tbody></table>
+
+<script>
+const pp = [];
+fetch('https://nowanowa.github.io/note/clip/perfectpower-10^20.json').then((response) => {
+  if (response.ok) {
+    return response.json();
+  } else {
+    throw new Error();
+  }
+}).then((pps) => {
+  Array.prototype.push.apply(pp,pps);
+  reque();
+});
+
+const reque = () => {
+  const f = document.forms['request'];
+  const bmax = Math.min(Number(f.sup.value),99);
+  const bexc = f.exclude.value.split(',');
+  const bemax = Number(f.max.value);
+
+  const tbody = document.getElementById('pplist');
+  tbody.innerHTML = 0;
+
+  const l = pp.length;
+  let html = '';
+  for (let i = 0; i < l; i++) {
+    let bltmax = true;
+    let excluded = false;
+    const d = pp[i];
+    const ga = d.gen;
+    const gl = ga.length;
+    let j, color, right = '';
+    for (j = 0; j < gl; j++) {
+      const gen = ga[j];
+      const b = gen.b;
+      const col = 'rgb(0,' + (157 * Math.atan(b / 3.14) - 32) + ',0)';
+      right += '<span style="color:' + col + ';"> = ' + b + '^' + gen.e + '</span>';
+      if (b <= bmax) bltmax = false
+      if (bexc.indexOf(''+b) >= 0) excluded = true;
+      if (j == 0) color = col;
+    }
+    if (excluded || bltmax) continue;
+    const a = d.a;
+    if (a > 10 ** bemax) break;
+    html += '<tr><td style="color:' + color + ';">' + a + '</td><td>' + right + '</td></tr>';
+    tbody.innerHTML = html;
+  }
+};
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.getElementById('panelonoff');
+  const panel = document.getElementById('panel');
+  button.addEventListener('click', () => {
+    const b = button.className == 'showing';
+    panel.hidden = b;
+    button.className = b ? 'hidden' : 'showing';
+    button.innerHTML = b ? '…' : '×';
+  });
+});
+</script>
+</body></html>
+
