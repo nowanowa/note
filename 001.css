@@ -83,7 +83,7 @@ em{
   background:#666;
   color:#fff;
 }
-code{
+code,.monospace{
   font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
 }
 *:not(pre)>code{
