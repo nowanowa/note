@@ -188,7 +188,6 @@ function setting(event,targetName){
   form.W.value = form.W.value || 720;
   form.H.value = form.H.value || 480;
   let change = targetName || (event ? event.target.name : 'loaded');
-  if (targetName) alert(change);
   if (change) {
     const ratioW = form.ratioW.value;
     const ratioH = form.ratioH.value;
@@ -381,12 +380,14 @@ document.addEventListener('DOMContentLoaded',()=>{
       const ruler = document.getElementById('ruler');
       const rulerX = parseFloat(ruler.style.left);
       const rulerY = parseFloat(ruler.style.top);
+      alert(rulerX+','+rulerY);
       const form = document.forms['setting'];
       const W = Number(form.W.value);
       const H = Number(form.H.value);
-      let nx, ny;
-      if (!(nx=linear('n'))) nx = linear('s') || W+(rulerX>0?-1:1)*rangeX;
-      if (!(ny=linear('w'))) ny = linear('e') || H+(rulerY>0?-1:1)*rangeY;
+      let nx = linear('n') || linear('s') || (W+(rulerX>0?-1:1)*rangeX);
+      let ny = linear('w') || linear('e') || (H+(rulerY>0?-1:1)*rangeY);
+      //if (!(nx=linear('n'))) nx = linear('s') || W+(rulerX>0?-1:1)*rangeX;
+      //if (!(ny=linear('w'))) ny = linear('e') || H+(rulerY>0?-1:1)*rangeY;
       nx = nx<1 ? 1 : nx;
       ny = ny<1 ? 1 : ny;
       const b = (W > H) ^ (rulerX > 0);
@@ -428,10 +429,10 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="ratio" type="number" name="ratioH" min="1" onclick="this.select();">
       </h1>
       <p class="blockcenter">
-        <label><input type="checkbox" name="fixedX">Fixed</label><br>
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
+        <label><input type="checkbox" name="fixedX">Fixed</label><br>
       </p>
       </p>
       <div class="bar of-e">
