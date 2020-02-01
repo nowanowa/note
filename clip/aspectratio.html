@@ -346,10 +346,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     //}
   };
   const onEnd = (e) => {
-    alert(e.type);
-    const pointer = isTouch ? event.touches[0] : event;
-    touch.currX = pointer.clientX;
-    touch.currY = pointer.clientY;
+    //alert(e.type);
+    //const pointer = isTouch ? event.touches[0] : event;
+    //touch.currX = pointer.clientX;
+    //touch.currY = pointer.clientY;
     touch.press = 0;
     if (1 || touch.rulerMoving) {
       const rem = document.querySelector('.sankaku button').clientWidth / 2;
