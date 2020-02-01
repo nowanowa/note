@@ -183,10 +183,10 @@ function PFstr(n){
 }
 function setting(event,targetName){
   const form = document.forms['setting'];
-  form.ratioW.value = form.ratioW.value || 4;
+  form.ratioW.value = form.ratioW.value || 2;
   form.ratioH.value = form.ratioH.value || 3;
   form.W.value = form.W.value || 640;
-  form.H.value = form.H.value || 480;
+  form.H.value = form.H.value || 960;
   let change = event ? event.target.name : targetName || 'loaded';
   if (change) {
     const ratioW = form.ratioW.value;
@@ -310,7 +310,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     rulerY: 0,
   };
   const onMove = (e) => {
-    e.preventDefault();
     touch.currX = event.clientX;
     touch.currY = event.clientY;
     if (touch.press && !touch.rulerMoving) {
@@ -333,15 +332,19 @@ document.addEventListener('DOMContentLoaded',()=>{
       ruler.style.left= l + Math.max(dX, dY*W/H) + 'px';
       ruler.style.top = t + Math.max(dY, dX*H/W) + 'px';
     }
+    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+      e.preventDefault();
+    }
   };
   const onStart = (e) => {
-    e.preventDefault();
     touch.startX = event.clientX;
     touch.startY = event.clientY;
     touch.press = 1;
+    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+      e.preventDefault();
+    }
   };
   const onEnd = (e) => {
-    e.preventDefault();
     touch.currX = event.clientX;
     touch.currY = event.clientY;
     touch.press = 0;
@@ -391,6 +394,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       ruler.style.left = '';
       ruler.style.top = '';
       touch.rulerMoving = 0;
+    }
+    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+      e.preventDefault();
     }
   };
   const isTouch = 'ontouchend' in document;
