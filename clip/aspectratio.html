@@ -341,9 +341,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     touch.startX = pointer.clientX;
     touch.startY = pointer.clientY;
     touch.press = 1;
-    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+    //if (!/button|input/.test(event.target.tagName.toLowerCase())) {
       e.preventDefault();
-    }
+    //}
   };
   const onEnd = (e) => {
     const pointer = isTouch ? event.touches[0] : event;
@@ -411,6 +411,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   window.addEventListener(pointerStart, onStart);
   window.addEventListener(pointerEnd, onEnd);
   window.addEventListener(pointerCancel, onEnd);
+  window.addEventListener('scroll',(e)=>{e.preventDefault()});
 });
 </script>
 </head>
@@ -429,10 +430,11 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="ratio" type="number" name="ratioH" min="1" onclick="this.select();">
       </h1>
       <p class="blockcenter">
+        <label><input type="checkbox" name="fixedX">Fixed</label><br>
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
-        <label><input type="checkbox" name="fixedX">Fixed</label><br>
+        <label><input type="checkbox" name="fixedY">Fixed</label><br>
       </p>
       </p>
       <div class="bar of-e">
