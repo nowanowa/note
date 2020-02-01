@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1.0">
+<title>タイトル</title>
+<style>
+body{
+  position:relative;
+  margin:0;
+  background:#eed;
+}
+#box{
+  position:absolute;
+  width:300px;
+  height:300px;
+  background:#efe;
+  border:1px solid #874;
+}
+#startpoint{
+  position:fixed;
+  width:4px;
+  height:4px;
+  background:#f88;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const box = document.getElementById('box');
+  let press = 0;
+  const touch = {
+    startX: 0,
+    startY: 0,
+    currX: 0,
+    currY: 0,
+  };
+  const onMove = (e) => {
+    touch.currX = e.clientX;
+    touch.currY = e.clientY;
+    const start = document.getElementById('startpoint');
+    if (start) {
+      start.style.width = touch.currX-touch.startX + 'px';
+      start.style.height = touch.currY-touch.startY + 'px';
+    }
+    box.innerHTML = '<p>type:'+e.type+'</p>';
+    if (press) {
+      box.insertAdjacentHTML('beforeend', 'clientX:'+e.clientX+', clientY:'+e.clientY);
+    }
+    e.preventDefault();
+  };
+  const onStart = (e) => {
+    touch.startX = e.clientX;
+    touch.startY = e.clientY;
+    const start = document.createElement('div');
+    start.setAttribute('id', 'startpoint');
+    start.setAttribute('style', 'left:'+touch.startX+'px;top:'+touch.startY+'px;');
+    document.body.appendChild(start);
+    box.innerHTML = '<p>type:'+e.type+'</p>';
+    press = 1;
+    box.insertAdjacentHTML('beforeend', 'clientX:'+e.clientX+', clientY:'+e.clientY);
+    e.preventDefault();
+  };
+  const onEnd = (e) => {
+    const start = document.getElementById('startpoint');
+    start.parentNode.removeChild(start);
+    box.innerHTML = '<p>type:'+e.type+'</p>';
+    press = 0;
+    e.preventDefault();
+  };
+  const isTouch = 'ontouchend' in document;
+  const pointerMove = isTouch ? 'touchmove' : 'mousemove';
+  const pointerStart = isTouch ? 'touchstart' : 'mousedown';
+  const pointerEnd   = isTouch ? 'touchend' : 'mouseup';
+  const pointerCancel = isTouch ? 'touchcancel' : 'mouseleave';
+  document.addEventListener(pointerMove, onMove, {passive: false});
+  document.addEventListener(pointerStart, onStart);
+  document.addEventListener(pointerEnd, onEnd);
+  document.addEventListener(pointerCancel, onEnd);
+});
+</script>
+</head>
+<body>
+<div id="box"></div>
+</body>
+</html>
