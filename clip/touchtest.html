@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
     box.innerHTML = '<p>type:'+e.type+'</p>';
     if (press) {
-      box.insertAdjacentHTML('beforeend', 'clientX:'+e.clientX+', clientY:'+e.clientY);
+      box.insertAdjacentHTML('beforeend', 'clientX:'+pointer.clientX+', clientY:'+pointer.clientY);
     }
     e.preventDefault();
   };

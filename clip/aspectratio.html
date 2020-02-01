@@ -187,7 +187,7 @@ function setting(event,targetName){
   form.ratioH.value = form.ratioH.value || 2;
   form.W.value = form.W.value || 720;
   form.H.value = form.H.value || 480;
-  let change = event ? event.target.name : targetName || 'loaded';
+  let change = targetName || (event ? event.target.name : 'loaded');
   if (change) {
     const ratioW = form.ratioW.value;
     const ratioH = form.ratioH.value;
