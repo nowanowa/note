@@ -293,12 +293,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     numbers = json;
     setting();
   });
+  const isTouch = 'ontouchstart' in document;
   document.forms['setting'].addEventListener('change', setting);
-  if (!('ontouchend' in document)) window.addEventListener('keyup', setting);
+  if (!isTouch) window.addEventListener('keyup', setting);
   for (const button of document.forms['setting'].querySelectorAll('button')) {
     button.addEventListener('click', setting);
   }
-  const isTouch = 'ontouchend' in document;
   const touch = {
     press: 0,
     startX: 0,
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
-        <label><input type="checkbox" name="fixedY">Fixed</label><br>
+        <label><input type="checkbox" name="fixedY">F</label><br>
       </p>
       </p>
       <div class="bar of-e">
