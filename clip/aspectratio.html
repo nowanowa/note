@@ -4,12 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,height=device-height,user-scalable=yes,initial-scale=1.0">
 <title>Aspect Ratio</title>
-<link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
 <style>
 *{
   box-sizing:border-box;
-  //font-family:monospace;
+  user-select:none;
 }
 
 .desk{
@@ -117,7 +115,13 @@
   right:100%;
 }
 
-
+#ruler{
+  position:absolute;
+  width:100%;
+  height:100%;
+  user-select:none;
+  cursor:grab;
+}
 .ruler{
   position:absolute;
   width:40%;
@@ -141,6 +145,7 @@
 </style>
 <script>
 let numbers;
+let rulerZoom = 1.5;
 function PFstr(n){
   const num = n;
   const facs = numbers[n];
@@ -166,17 +171,17 @@ function PFstr(n){
   }
   const col = (dst > 36) ? 96 : 96 * Math.sqrt(dst) / 6;
   const sty = 'color:hsl(300,100%,' + Math.floor(col) + '%);';
-  left += '<span style="' + sty + '">' + num + '</span>';
+  left += '<span class="n' + num + '" style="' + sty + '">' + num + '</span>';
   const cls = (prime ? 'prime' : 'composite') + ' dist' + dst;
-  return '<div class="' + cls + '">' + left + ' = ' + right + '</div>\n';
+  return /*'<div class="' + cls + '">' + */left + ' = ' + right;// + '</div>\n';
 }
-function setting(){
+function setting(event,targetName){
   const form = document.forms['setting'];
-  form.ratioW.value = form.ratioW.value || 3;
-  form.ratioH.value = form.ratioH.value || 4;
-  form.W.value = form.W.value || 480;
-  form.H.value = form.H.value || 640;
-  let change = event ? event.target.name : 'loaded';
+  form.ratioW.value = form.ratioW.value || 4;
+  form.ratioH.value = form.ratioH.value || 3;
+  form.W.value = form.W.value || 640;
+  form.H.value = form.H.value || 480;
+  let change = event ? event.target.name : targetName || 'loaded';
   if (change) {
     const ratioW = form.ratioW.value;
     const ratioH = form.ratioH.value;
@@ -241,23 +246,20 @@ function plot(){
   const 垂直 = document.getElementById('ruler-vert');
   水平.textContent = '';
   垂直.textContent = '';
-  const divstr = function(position,content){
-    const lt = position * 1.5;
+  const divstr = function(position,content,n){
+    const lt = position * rulerZoom;
     const style = 'left:'+lt+'rem; top:'+lt+'rem';
-    const div = '<div class="grad" style="'+style+'">'+content+'</div>';
+    const div = '<div class="grad n'+n+'" style="'+style+'">'+content+'</div>';
     return div;
   }
   const nx = Math.floor(x0);
   const dx = nx - x0;
   const ny = Math.floor(y0);
   const dy = ny - y0;
-  水平.insertAdjacentHTML('beforeend',divstr(dx,PFstr(nx)));
-  垂直.insertAdjacentHTML('beforeend',divstr(dy,PFstr(ny)));
-  for (let i = 1; i < Math.max(rangeX, rangeY); i++) {
-    水平.insertAdjacentHTML('beforeend',divstr(dx+i,PFstr(nx+i)));
-    垂直.insertAdjacentHTML('beforeend',divstr(dy+i,PFstr(ny+i)));
-    if (nx-i>=0) 水平.insertAdjacentHTML('beforeend',divstr(dx-i,PFstr(nx-i)));
-    if (ny-i>=0) 垂直.insertAdjacentHTML('beforeend',divstr(dy-i,PFstr(ny-i)));
+  const range = Math.max(rangeX, rangeY);
+  for (let i = -range; i < range; i++) {
+    if (nx+i>=0) 水平.insertAdjacentHTML('beforeend',divstr(dx+i,PFstr(nx+i),nx+i));
+    if (ny+i>=0) 垂直.insertAdjacentHTML('beforeend',divstr(dy+i,PFstr(ny+i),ny+i));
   }
 }
 function setBG3(w, h){
@@ -278,14 +280,6 @@ function setBG3(w, h){
   se.style.transform = 'rotate(' + (Math.atan(h/w)*180/Math.PI-45) + 'deg)';
 }
 document.addEventListener('DOMContentLoaded',()=>{
-  window.addEventListener('keyup', setting);
-  document.forms['setting'].addEventListener('change', setting);
-  for (const button of document.forms['setting'].querySelectorAll('button')) {
-    button.addEventListener('click', setting);
-  }
-  for (const input of document.forms['setting'].querySelectorAll('input')) {
-    input.addEventListener('click', ()=>{event.target.select});
-  }
   fetch('https://raw.githubusercontent.com/nowanowa/prime/master/factorization/0.json').then((response) => {
     if (response.ok) return response.json();
     else throw new Error();
@@ -293,14 +287,122 @@ document.addEventListener('DOMContentLoaded',()=>{
     numbers = json;
     setting();
   });
+  window.addEventListener('keyup', setting);
+  document.forms['setting'].addEventListener('change', setting);
+  for (const button of document.forms['setting'].querySelectorAll('button')) {
+    button.addEventListener('click', setting);
+  }
+  const touch = {
+    press: 0,
+    startX: 0,
+    startY: 0,
+    currX: 0,
+    currY: 0,
+    endX: 0,
+    endY: 0,
+    rulerX: 0,
+    rulerY: 0,
+  };
+  const onMove = () => {
+    touch.currX = event.clientX;
+    touch.currY = event.clientY;
+    if (touch.press && !touch.rulerMoving) {
+      const ruler = document.getElementById('ruler');
+      touch.rulerX = parseInt(ruler.style.left) || 0;
+      touch.rulerY = parseInt(ruler.style.top) || 0;
+      if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+        touch.rulerMoving = 1;
+      }
+    }
+    if (touch.rulerMoving) {
+      const ruler = document.getElementById('ruler');
+      const l = touch.rulerX;
+      const t = touch.rulerY;
+      const dX = touch.currX - touch.startX;
+      const dY = touch.currY - touch.startY;
+      const form = document.forms['setting'];
+      const W = form.ratioW.value;
+      const H = form.ratioH.value;
+      ruler.style.left= l + Math.max(dX, dY*W/H) + 'px';
+      ruler.style.top = t + Math.max(dY, dX*H/W) + 'px';
+    }
+  };
+  const onStart = () => {
+    touch.startX = event.clientX;
+    touch.startY = event.clientY;
+    touch.press = 1;
+  };
+  const onEnd = () => {
+    touch.currX = event.clientX;
+    touch.currY = event.clientY;
+    touch.press = 0;
+    if (touch.rulerMoving) {
+      const rem = document.querySelector('.sankaku button').clientWidth / 2;
+      const cX = window.innerWidth / 2;
+      const cY = window.innerHeight / 2;
+      const rangeX = Math.ceil(cX / rem);
+      const rangeY = Math.ceil(cY / rem);
+      const linear = (dir) => {
+        let match, range, d;
+        const RANGE = 'ns'.match(dir) ? rangeY : rangeX;
+        for (let i = 0; i < RANGE; i++) {
+          let a,b;
+          switch (dir) {
+            case 'w':
+              a = -i; b = +1; break;
+            case 'e':
+              a = +i; b = +1; break;
+            case 'n':
+              a = +1; b = -i; break;
+            case 's':
+              a = +1; b = +i; break;
+          }
+          const elem = document.elementFromPoint(cX + a*rem, cY + b*rem);
+          match = elem.className.match(/n(\d+)/);
+          if (match) break;
+        }
+        return match ? Number(match[1]) : 0;
+      };
+      const ruler = document.getElementById('ruler');
+      const rulerX = parseFloat(ruler.style.left);
+      const rulerY = parseFloat(ruler.style.top);
+      const form = document.forms['setting'];
+      const W = Number(form.W.value);
+      const H = Number(form.H.value);
+      let nx, ny;
+      if (!(nx=linear('n'))) nx = linear('s') || W+(rulerX>0?-1:1)*rangeX;
+      if (!(ny=linear('w'))) ny = linear('e') || H+(rulerY>0?-1:1)*rangeY;
+      nx = nx<1 ? 1 : nx;
+      ny = ny<1 ? 1 : ny;
+      const b = (W > H) ^ (rulerX > 0);
+      const tgtNm = b ? 'W' : 'H';
+      const newValue = b ? nx : ny;
+      form[tgtNm].value = newValue;
+      setting(null, tgtNm);
+      ruler.style.left = '';
+      ruler.style.top = '';
+      touch.rulerMoving = 0;
+    }
+  };
+  const isTouch = 'ontouchend' in document;
+  const pointerMove = isTouch ? 'touchmove' : 'mousemove';
+  const pointerStart = isTouch ? 'touchstart' : 'mousedown';
+  const pointerEnd   = isTouch ? 'touchend' : 'mouseup';
+  const pointerCancel = isTouch ? 'touchcancel' : 'mouseleave';
+  document.addEventListener(pointerMove, onMove);
+  document.addEventListener(pointerStart, onStart);
+  document.addEventListener(pointerEnd, onEnd);
+  document.addEventListener(pointerCancel, onEnd);
 });
 </script>
 </head>
 <body>
 <div class="desk">
   <div id="triangle" class="triangle">&nbsp;</div>
-  <div id="ruler-hori" class="ruler horizontal"></div>
-  <div id="ruler-vert" class="ruler vertical"></div>
+  <div id="ruler">
+    <div id="ruler-hori" class="ruler horizontal"></div>
+    <div id="ruler-vert" class="ruler vertical"></div>
+  </div>
   <div class="paper">
     <form name="setting" class="setting">
       <h1 class="ratio">
