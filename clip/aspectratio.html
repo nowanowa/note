@@ -346,12 +346,14 @@ document.addEventListener('DOMContentLoaded',()=>{
     //}
   };
   const onEnd = (e) => {
-    //alert(e.type);
-    //const pointer = isTouch ? event.touches[0] : event;
-    //touch.currX = pointer.clientX;
-    //touch.currY = pointer.clientY;
+    /*
+    //このへんのどれかが悪さをしていた！
+    const pointer = isTouch ? event.touches[0] : event;
+    touch.currX = pointer.clientX;
+    touch.currY = pointer.clientY;
+    */
     touch.press = 0;
-    if (1 || touch.rulerMoving) {
+    if (touch.rulerMoving) {
       const rem = document.querySelector('.sankaku button').clientWidth / 2;
       const cX = window.innerWidth / 2;
       const cY = window.innerHeight / 2;
@@ -381,7 +383,6 @@ document.addEventListener('DOMContentLoaded',()=>{
       const ruler = document.getElementById('ruler');
       const rulerX = parseFloat(ruler.style.left);
       const rulerY = parseFloat(ruler.style.top);
-      alert(rulerX+','+rulerY);
       const form = document.forms['setting'];
       const W = Number(form.W.value);
       const H = Number(form.H.value);
@@ -431,7 +432,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="ratio" type="number" name="ratioH" min="1" onclick="this.select();">
       </h1>
       <p class="blockcenter">
-        <label><input type="checkbox" name="fixedX">Fix</label><br>
+        <label><input type="checkbox" name="fixedX">F</label><br>
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
