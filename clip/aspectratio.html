@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,height=device-height,user-scalable=yes,initial-scale=1.0">
+<title>Aspect Ratio</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+<style>
+*{
+  box-sizing:border-box;
+  //font-family:monospace;
+}
+
+.desk{
+  position:fixed;
+  left:0;
+  top:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:#ffd;
+}
+.triangle{
+  position:absolute;
+  width:0;
+  height:0;
+  color:transparent;
+  left:0vw;
+  border-left:50vw solid #dfe;
+  border-right:50vw solid #dfe;
+  top:+10vh;
+  border-top:40vh solid #eff;
+  border-bottom:40vh solid #eff;
+}
+.paper{
+  position:absolute;
+  left:0;
+  top:0;
+  width:50%;
+  height:50%;
+  border:0 solid black;
+  padding:8px;
+  background:rgba(255,255,255,0.9);
+  box-shadow:0 0 8px rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  justify-content: center;
+}
+.paper form.setting .blockcenter{
+  display:block;
+  text-align:center;
+}
+
+.setting h1.ratio{
+  position:fixed;
+  left:0;
+  bottom:8px;
+  margin:0;
+  padding:8px;
+  background:rgba(255,255,255,0.7);
+  border-right:1em solid rgba(255,128,128,0.2);
+  box-shadow:0 0 8px rgba(0,0,0,0.5);
+}
+
+.setting input.ratio{
+  font-size:100%;
+  width:6rem;
+}
+.setting input.px{
+  width:100%;
+  min-width:6rem;
+}
+.setting .bar{
+  position:absolute;
+  width:6px;
+  height:6px;
+  right:-3px;
+  bottom:-3px;
+}
+.setting .bar:hover{
+  background:rgba(255,0,0,0.4);
+}
+.setting .bar.of-e{
+  bottom:3px;
+  height:100%;
+  cursor:e-resize;
+}
+.setting .bar.of-s{
+  right:3px;
+  width:100%;
+  cursor:s-resize;
+}
+.setting .bar.of-se{
+  cursor:se-resize;
+}
+.setting .sankaku{
+  position:absolute;
+  right:calc(100% - 3rem);
+  bottom:calc(100% - 3rem);
+}
+.setting .sankaku button{
+  width:2rem;
+  height:2rem;
+  box-shadow:0 0 8px rgba(0,0,0,0.1);
+}
+.setting .子,.setting .乾{
+  bottom:100%;
+}
+.setting .午,.setting .巽{
+  top:100%;
+}
+.setting .卯,.setting .巽{
+  left:100%;
+}
+.setting .酉,.setting .乾{
+  right:100%;
+}
+
+
+.ruler{
+  position:absolute;
+  width:40%;
+  height:25%;
+}
+.ruler.horizontal{ left:50%; top:25%; }
+.ruler.vertical{ left:10%; top:50%; }
+.ruler .grad{
+  position:absolute;
+  border:0px solid #128;
+  white-space:nowrap;
+}
+.ruler.horizontal .grad{
+  height:100%;
+  border-left-width:1px;
+}
+.ruler.vertical .grad{
+  width:100%;
+  border-top-width:1px;
+}
+</style>
+<script>
+let numbers;
+function PFstr(n){
+  const num = n;
+  const facs = numbers[n];
+  let left = '';
+  let right = '';
+  let dst = 0;
+  let pre = 1;
+  let prime = 1;
+  for (let i = 0; i < facs.length; i++) {
+    const factor = facs[i];
+    const p = Number(factor['p']);
+    const e = Number(factor['e']);
+    if (pre == 0 || e != 1) {
+      prime = 0;
+    }
+    const col = (p > 21) ? 0 : 100 * (1 - Math.log(p - 1) / 3);
+    const sty = 'color:hsl(30,' + Math.floor(col) + '%,50%);';
+    right += (pre == 1) ? '' : ' * ';
+    right += '<span class="factor" style="' + sty + '">' + p + '</span>';
+    right += (e == 1) ? '' : '<span class="exponent" style="' + sty + '">^' + e + '</span>';
+    dst += (p < 6) ? 0 : p;
+    pre = 0;
+  }
+  const col = (dst > 36) ? 96 : 96 * Math.sqrt(dst) / 6;
+  const sty = 'color:hsl(300,100%,' + Math.floor(col) + '%);';
+  left += '<span style="' + sty + '">' + num + '</span>';
+  const cls = (prime ? 'prime' : 'composite') + ' dist' + dst;
+  return '<div class="' + cls + '">' + left + ' = ' + right + '</div>\n';
+}
+function setting(){
+  const form = document.forms['setting'];
+  form.ratioW.value = form.ratioW.value || 3;
+  form.ratioH.value = form.ratioH.value || 4;
+  form.W.value = form.W.value || 480;
+  form.H.value = form.H.value || 640;
+  let change = event ? event.target.name : 'loaded';
+  if (change) {
+    const ratioW = form.ratioW.value;
+    const ratioH = form.ratioH.value;
+    const nowW = form.W.value;
+    const nowH = form.H.value;
+    switch (change) {
+      case 'resize':
+        const step = function(x, div){
+          return (div < 0) ? (Math.ceil(x) - 1) : (Math.floor(x) + 1);
+        };
+        const nearer = function(x, y, div){
+          return (div < 0) ? Math.max(x, y) : Math.min(x, y);
+        };
+        const dir = event.target.value;
+        const div = 'se'.match(dir) ? +1 : -1;
+        switch (dir) {
+          case 'w':
+          case 'e':
+            const newW = step(nowW, div)
+            form.W.value = newW;
+            form.ratioW.value = newW / nowH * ratioH;
+            break;
+          case 'n':
+          case 's':
+            const newH = step(nowH, div)
+            form.H.value = newH;
+            form.ratioH.value = newH / nowW * ratioW;
+            break;
+          case 'nw':
+          case 'se':
+            const newW1 = step(nowW, div);
+            const newH2 = step(nowH, div);
+            const newH1 = ratioH / ratioW * newW1;
+            const newW2 = ratioW / ratioH * newH2;
+            form.W.value = nearer(newW1, newW2, div);
+            form.H.value = nearer(newH1, newH2, div);
+            break;
+          default:
+        }
+        break;
+      case 'ratioH':
+      case 'W':
+        form.H.value = ratioH / ratioW * nowW;
+        break;
+      case 'ratioW':
+      case 'H':
+        form.W.value = ratioW / ratioH * nowH;
+        break;
+    }
+  }
+  setBG3(form.ratioW.value, form.ratioH.value);
+  plot();
+}
+function plot(){
+  const rem = document.querySelector('.sankaku button').clientWidth / 2;
+  const rangeX = Math.floor(window.innerWidth / rem / 2);
+  const rangeY = Math.floor(window.innerHeight / rem / 2);
+  const form = document.forms['setting'];
+  const x0 = form.W.value;
+  const y0 = form.H.value;
+  const 水平 = document.getElementById('ruler-hori');
+  const 垂直 = document.getElementById('ruler-vert');
+  水平.textContent = '';
+  垂直.textContent = '';
+  const divstr = function(position,content){
+    const lt = position * 1.5;
+    const style = 'left:'+lt+'rem; top:'+lt+'rem';
+    const div = '<div class="grad" style="'+style+'">'+content+'</div>';
+    return div;
+  }
+  const nx = Math.floor(x0);
+  const dx = nx - x0;
+  const ny = Math.floor(y0);
+  const dy = ny - y0;
+  水平.insertAdjacentHTML('beforeend',divstr(dx,PFstr(nx)));
+  垂直.insertAdjacentHTML('beforeend',divstr(dy,PFstr(ny)));
+  for (let i = 1; i < Math.max(rangeX, rangeY); i++) {
+    水平.insertAdjacentHTML('beforeend',divstr(dx+i,PFstr(nx+i)));
+    垂直.insertAdjacentHTML('beforeend',divstr(dy+i,PFstr(ny+i)));
+    if (nx-i>=0) 水平.insertAdjacentHTML('beforeend',divstr(dx-i,PFstr(nx-i)));
+    if (ny-i>=0) 垂直.insertAdjacentHTML('beforeend',divstr(dy-i,PFstr(ny-i)));
+  }
+}
+function setBG3(w, h){
+  const tri = document.getElementById('triangle');
+  const b = window.innerWidth < window.innerHeight*w/h;
+  const u = b ? 'vw' : 'vh';
+  const left = b ? '0vw' : 'calc(50vw - '+50*(w/h)+'vh';
+  const top  = b ? 'calc(50vh - '+50*(h/w)+'vw' : '0vh';
+  const LR = b ? 50+'vw' : 50*(w/h)+'vh';
+  const TB = b ? 50*(h/w)+'vw' : 50+'vh';
+  tri.style.left = left;
+  tri.style.borderLeftWidth = LR;
+  tri.style.borderRightWidth = LR;
+  tri.style.top = top;
+  tri.style.borderTopWidth = TB;
+  tri.style.borderBottomWidth = TB;
+  const se = document.querySelector('.bar.of-se');
+  se.style.transform = 'rotate(' + (Math.atan(h/w)*180/Math.PI-45) + 'deg)';
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  window.addEventListener('keyup', setting);
+  document.forms['setting'].addEventListener('change', setting);
+  for (const button of document.forms['setting'].querySelectorAll('button')) {
+    button.addEventListener('click', setting);
+  }
+  for (const input of document.forms['setting'].querySelectorAll('input')) {
+    input.addEventListener('click', ()=>{event.target.select});
+  }
+  fetch('https://raw.githubusercontent.com/nowanowa/prime/master/factorization/0.json').then((response) => {
+    if (response.ok) return response.json();
+    else throw new Error();
+  }).then((json) => {
+    numbers = json;
+    setting();
+  });
+});
+</script>
+</head>
+<body>
+<div class="desk">
+  <div id="triangle" class="triangle">&nbsp;</div>
+  <div id="ruler-hori" class="ruler horizontal"></div>
+  <div id="ruler-vert" class="ruler vertical"></div>
+  <div class="paper">
+    <form name="setting" class="setting">
+      <h1 class="ratio">
+        <input class="ratio" type="number" name="ratioW" min="1" onclick="this.select();">
+        :
+        <input class="ratio" type="number" name="ratioH" min="1" onclick="this.select();">
+      </h1>
+      <p class="blockcenter">
+        <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
+        ×<br>
+        <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
+      </p>
+      </p>
+      <div class="bar of-e">
+        <div class="sankaku 酉"><button type="button" name="resize" value="w">&#9664;</button></div>
+        <div class="sankaku 卯"><button type="button" name="resize" value="e">&#9654;</button></div>
+      </div>
+      <div class="bar of-s">
+        <div class="sankaku 子"><button type="button" name="resize" value="n">&#9650;</button></div>
+        <div class="sankaku 午"><button type="button" name="resize" value="s">&#9660;</button></div>
+      </div>
+      <div class="bar of-se">
+        <div class="sankaku 乾"><button type="button" name="resize" value="nw">&#9700;</button></div>
+        <div class="sankaku 巽"><button type="button" name="resize" value="se">&#9698;</button></div>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
