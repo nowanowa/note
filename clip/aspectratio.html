@@ -9,6 +9,12 @@
   box-sizing:border-box;
   user-select:none;
 }
+html,body{
+  margin:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+}
 
 .desk{
   position:fixed;
@@ -303,7 +309,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     rulerX: 0,
     rulerY: 0,
   };
-  const onMove = () => {
+  const onMove = (e) => {
+    e.preventDefault();
     touch.currX = event.clientX;
     touch.currY = event.clientY;
     if (touch.press && !touch.rulerMoving) {
@@ -327,12 +334,14 @@ document.addEventListener('DOMContentLoaded',()=>{
       ruler.style.top = t + Math.max(dY, dX*H/W) + 'px';
     }
   };
-  const onStart = () => {
+  const onStart = (e) => {
+    e.preventDefault();
     touch.startX = event.clientX;
     touch.startY = event.clientY;
     touch.press = 1;
   };
-  const onEnd = () => {
+  const onEnd = (e) => {
+    e.preventDefault();
     touch.currX = event.clientX;
     touch.currY = event.clientY;
     touch.press = 0;
