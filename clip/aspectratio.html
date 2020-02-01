@@ -188,6 +188,7 @@ function setting(event,targetName){
   form.W.value = form.W.value || 720;
   form.H.value = form.H.value || 480;
   let change = targetName || (event ? event.target.name : 'loaded');
+  if (targetName) alert(change);
   if (change) {
     const ratioW = form.ratioW.value;
     const ratioH = form.ratioH.value;
@@ -350,7 +351,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     touch.currX = pointer.clientX;
     touch.currY = pointer.clientY;
     touch.press = 0;
-    if (touch.rulerMoving) {
+    if (1 || touch.rulerMoving) {
       const rem = document.querySelector('.sankaku button').clientWidth / 2;
       const cX = window.innerWidth / 2;
       const cY = window.innerHeight / 2;
@@ -427,6 +428,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="ratio" type="number" name="ratioH" min="1" onclick="this.select();">
       </h1>
       <p class="blockcenter">
+        <label><input type="checkbox" name="fixedX">Fixed</label><br>
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
