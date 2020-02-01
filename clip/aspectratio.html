@@ -341,9 +341,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     touch.startX = pointer.clientX;
     touch.startY = pointer.clientY;
     touch.press = 1;
-    //if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
       e.preventDefault();
-    //}
+    }
   };
   const onEnd = (e) => {
     /*
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
-        <label><input type="checkbox" name="fixedY">F</label><br>
+        <label><input type="checkbox" name="fixedY">Fi</label><br>
       </p>
       </p>
       <div class="bar of-e">
