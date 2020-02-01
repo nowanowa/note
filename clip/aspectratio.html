@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,height=device-height,user-scalable=yes,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1.0">
 <title>Aspect Ratio</title>
 <style>
 *{
@@ -183,10 +183,10 @@ function PFstr(n){
 }
 function setting(event,targetName){
   const form = document.forms['setting'];
-  form.ratioW.value = form.ratioW.value || 2;
-  form.ratioH.value = form.ratioH.value || 3;
-  form.W.value = form.W.value || 640;
-  form.H.value = form.H.value || 960;
+  form.ratioW.value = form.ratioW.value || 3;
+  form.ratioH.value = form.ratioH.value || 2;
+  form.W.value = form.W.value || 720;
+  form.H.value = form.H.value || 480;
   let change = event ? event.target.name : targetName || 'loaded';
   if (change) {
     const ratioW = form.ratioW.value;
@@ -293,8 +293,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     numbers = json;
     setting();
   });
-  window.addEventListener('keyup', setting);
   document.forms['setting'].addEventListener('change', setting);
+  if (!('ontouchend' in document)) window.addEventListener('keyup', setting);
   for (const button of document.forms['setting'].querySelectorAll('button')) {
     button.addEventListener('click', setting);
   }
@@ -332,9 +332,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       ruler.style.left= l + Math.max(dX, dY*W/H) + 'px';
       ruler.style.top = t + Math.max(dY, dX*H/W) + 'px';
     }
-    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
-      e.preventDefault();
-    }
+    e.preventDefault();
   };
   const onStart = (e) => {
     touch.startX = event.clientX;
@@ -395,7 +393,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       ruler.style.top = '';
       touch.rulerMoving = 0;
     }
-    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+    if (event.target.tagName && !/button|input/.test(event.target.tagName.toLowerCase())) {
       e.preventDefault();
     }
   };
@@ -404,7 +402,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const pointerStart = isTouch ? 'touchstart' : 'mousedown';
   const pointerEnd   = isTouch ? 'touchend' : 'mouseup';
   const pointerCancel = isTouch ? 'touchcancel' : 'mouseleave';
-  document.addEventListener(pointerMove, onMove);
+  document.addEventListener(pointerMove, onMove, {passive: false});
   document.addEventListener(pointerStart, onStart);
   document.addEventListener(pointerEnd, onEnd);
   document.addEventListener(pointerCancel, onEnd);
