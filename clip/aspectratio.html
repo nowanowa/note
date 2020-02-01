@@ -408,9 +408,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   const pointerEnd   = isTouch ? 'touchend' : 'mouseup';
   const pointerCancel = isTouch ? 'touchcancel' : 'mouseleave';
   window.addEventListener(pointerMove, onMove, {passive: false});
-  window.addEventListener(pointerStart, onStart);
-  window.addEventListener(pointerEnd, onEnd);
-  window.addEventListener(pointerCancel, onEnd);
+  window.addEventListener(pointerStart, onStart, {passive: false});
+  window.addEventListener(pointerEnd, onEnd, {passive: false});
+  window.addEventListener(pointerCancel, onEnd, {passive: false});
   window.addEventListener('scroll',(e)=>{e.preventDefault()});
 });
 </script>
@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="ratio" type="number" name="ratioH" min="1" onclick="this.select();">
       </h1>
       <p class="blockcenter">
-        <label><input type="checkbox" name="fixedX">Fixed</label><br>
+        <label><input type="checkbox" name="fixedX">F</label><br>
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
