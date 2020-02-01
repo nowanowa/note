@@ -402,10 +402,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   const pointerStart = isTouch ? 'touchstart' : 'mousedown';
   const pointerEnd   = isTouch ? 'touchend' : 'mouseup';
   const pointerCancel = isTouch ? 'touchcancel' : 'mouseleave';
-  document.addEventListener(pointerMove, onMove, {passive: false});
-  document.addEventListener(pointerStart, onStart);
-  document.addEventListener(pointerEnd, onEnd);
-  document.addEventListener(pointerCancel, onEnd);
+  window.addEventListener('pointermove', onMove, {passive: false});
+  window.addEventListener('pointerdown', onStart);
+  window.addEventListener('pointerup', onEnd);
+  window.addEventListener('pointerout', onEnd);
 });
 </script>
 </head>

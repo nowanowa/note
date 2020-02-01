@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1.0">
-<title>タッチイベント</title>
+<title>PointerEvent</title>
 <style>
 body{
   position:relative;
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     e.preventDefault();
   };
   const onStart = (e) => {
+    //for (prop in e) console.log(prop, e[prop]);
     touch.startX = e.clientX;
     touch.startY = e.clientY;
     const start = document.createElement('div');
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   };
   const onEnd = (e) => {
     const start = document.getElementById('startpoint');
-    start.parentNode.removeChild(start);
+    if (start) start.parentNode.removeChild(start);
     box.innerHTML = '<p>type:'+e.type+'</p>';
     press = 0;
     e.preventDefault();
@@ -72,10 +73,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   const pointerStart = isTouch ? 'touchstart' : 'mousedown';
   const pointerEnd   = isTouch ? 'touchend' : 'mouseup';
   const pointerCancel = isTouch ? 'touchcancel' : 'mouseleave';
-  document.addEventListener(pointerMove, onMove, {passive: false});
-  document.addEventListener(pointerStart, onStart);
-  document.addEventListener(pointerEnd, onEnd);
-  document.addEventListener(pointerCancel, onEnd);
+  document.addEventListener('pointermove', onMove, {passive: false});
+  document.addEventListener('pointerdown', onStart);
+  document.addEventListener('pointerup', onEnd);
+  document.addEventListener('pointerout', onEnd);
 });
 </script>
 </head>
