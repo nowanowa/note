@@ -152,9 +152,9 @@ html,body{
 <script>
 let numbers;
 let rulerZoom = 1.5;
-function PFstr(n){
-  const num = n;
-  const facs = numbers[n];
+function PFstr(num,dir){
+  //const num = n;
+  const facs = numbers[num];
   let left = '';
   let right = '';
   let dst = 0;
@@ -177,7 +177,7 @@ function PFstr(n){
   }
   const col = (dst > 36) ? 96 : 96 * Math.sqrt(dst) / 6;
   const sty = 'color:hsl(300,100%,' + Math.floor(col) + '%);';
-  left += '<span class="n' + num + '" style="' + sty + '">' + num + '</span>';
+  left += '<span class="' + dir + num + '" style="' + sty + '">' + num + '</span>';
   const cls = (prime ? 'prime' : 'composite') + ' dist' + dst;
   return /*'<div class="' + cls + '">' + */left + ' = ' + right;// + '</div>\n';
 }
@@ -252,10 +252,10 @@ function plot(){
   const 垂直 = document.getElementById('ruler-vert');
   水平.textContent = '';
   垂直.textContent = '';
-  const divstr = function(position,content,n){
+  const divstr = function(position,content,n,dir){
     const lt = position * rulerZoom;
     const style = 'left:'+lt+'rem; top:'+lt+'rem';
-    const div = '<div class="grad n'+n+'" style="'+style+'">'+content+'</div>';
+    const div = '<div class="grad '+dir+n+'" style="'+style+'">'+content+'</div>';
     return div;
   }
   const nx = Math.floor(x0);
@@ -264,8 +264,8 @@ function plot(){
   const dy = ny - y0;
   const range = Math.max(rangeX, rangeY);
   for (let i = -range; i < range; i++) {
-    if (nx+i>=0) 水平.insertAdjacentHTML('beforeend',divstr(dx+i,PFstr(nx+i),nx+i));
-    if (ny+i>=0) 垂直.insertAdjacentHTML('beforeend',divstr(dy+i,PFstr(ny+i),ny+i));
+    if (nx+i>=0) 水平.insertAdjacentHTML('beforeend',divstr(dx+i,PFstr(nx+i),nx+i,'W'));
+    if (ny+i>=0) 垂直.insertAdjacentHTML('beforeend',divstr(dy+i,PFstr(ny+i),ny+i,'H'));
   }
 }
 function setBG3(w, h){
@@ -341,9 +341,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     touch.startX = pointer.clientX;
     touch.startY = pointer.clientY;
     touch.press = 1;
-    if (!/button|input/.test(event.target.tagName.toLowerCase())) {
+    //if (!/button|input/.test(event.target.tagName.toLowerCase())) {
       e.preventDefault();
-    }
+    //}
   };
   const onEnd = (e) => {
     /*
@@ -375,10 +375,11 @@ document.addEventListener('DOMContentLoaded',()=>{
               a = +1; b = +i; break;
           }
           const elem = document.elementFromPoint(cX + a*rem, cY + b*rem);
-          match = elem.className.match(/n(\d+)/);
-          if (match) break;
+          match = elem.className.match(/(W|H)(\d+)/);
+          const WH = /w|e/.test(dir) ? 'H' : 'W';
+          if (match && match[1]==WH) break;
         }
-        return match ? Number(match[1]) : 0;
+        return match ? Number(match[2]) : 0;
       };
       const ruler = document.getElementById('ruler');
       const rulerX = parseFloat(ruler.style.left);
@@ -410,9 +411,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   const pointerEnd   = isTouch ? 'touchend' : 'mouseup';
   const pointerCancel = isTouch ? 'touchcancel' : 'mouseleave';
   window.addEventListener(pointerMove, onMove, {passive: false});
-  window.addEventListener(pointerStart, onStart, {passive: false});
-  window.addEventListener(pointerEnd, onEnd, {passive: false});
-  window.addEventListener(pointerCancel, onEnd, {passive: false});
+  window.addEventListener(pointerStart, onStart/*, {passive: false}*/);
+  window.addEventListener(pointerEnd, onEnd/*, {passive: false}*/);
+  window.addEventListener(pointerCancel, onEnd/*, {passive: false}*/);
   window.addEventListener('scroll',(e)=>{e.preventDefault()});
 });
 </script>
@@ -436,7 +437,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         <input class="px" type="number" name="W" min="1" onclick="this.select();"><br>
         ×<br>
         <input class="px" type="number" name="H" min="1" onclick="this.select();"><br>
-        <label><input type="checkbox" name="fixedY">Fi</label><br>
+        <label><input type="checkbox" name="fixedY">F</label><br>
       </p>
       </p>
       <div class="bar of-e">
