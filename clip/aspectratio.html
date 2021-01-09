@@ -183,10 +183,10 @@ function PFstr(num,dir){
 }
 function setting(event,targetName){
   const form = document.forms['setting'];
-  form.ratioW.value = form.ratioW.value || 720;
-  form.ratioH.value = form.ratioH.value || 480;
-  form.W.value = form.W.value || 3;
-  form.H.value = form.H.value || 2;
+  form.ratioW.value = form.ratioW.value || 1.6180399887;
+  form.ratioH.value = form.ratioH.value || 1;
+  form.W.value = form.W.value || 89;
+  form.H.value = form.H.value || 55;
   let change = targetName || (event ? event.target.name : 'loaded');
   if (change) {
     const ratioW = form.ratioW.value;
