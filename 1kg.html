@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+<meta name="keywords" content="1kg,キログラム,質量,定義,定数,SI,国際単位系,光子,可視光,有理数,素因数分解" />
+<meta name="description" content="キログラムの厳密な定義を体感しようとしてみました" />
+<meta property="og:url" content="https://nowanowa.github.io/note/1kg.html" />
+<meta property="og:title" content="1kgを定義するのに光子1個にゃ荷が重い" />
+<meta property="og:description" content="キログラムの厳密な定義を体感しようとしてみました" />
+<meta property="og:image" content="https://nowanowa.github.io/note/img/1kg_japan.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@3nowanowa40" />
+<title>1kgを定義するのに光子1個にゃ荷が重い</title>
+<link rel="stylesheet" href="001.css">
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+</head>
+<body>
+<article class="mathtale">
+  <header>
+    <h2>1キログラムを定義するのに光子1個にゃ荷が重い</h2>
+    <time>2021-01-11</time>
+  </header>
+  <p>皆さんは<dfn>質量</dfn>を持っていますか？　私はいつも持っています。また、知人の多くも \(10^1 \textrm{kg}\) オーダー程度の質量を持っているようです。</p>
+  <p>ところで \(1 \textrm{kg}\) って、どのくらいの質量でしょうか？　そういえば「最近キログラムの定義が変わった」なんて話も聞きますね。「およそ1000mlパック牛乳1本分」と言われても想像しづらいと思いますので、きちんと定義を確認してみましょう。</p>
+  <figure class="formula def">
+    <figcaption>キログラムの定義</figcaption>
+    <p>質量のSI単位<dfn>キログラム</dfn>（記号 \(\textrm{kg}\) ）は、プランク定数 \(h\) を単位 \(\textrm{J m}\) （\(\textrm{kg m}^2\ \textrm{s}^{-1}\) に等しい）で表したときに、その値を正確に \(6.626\ 070\ 15 \times 10^{−34}\) と定めることによって定義される。ここで、メートル（記号 \(\mathrm{m}\) ）および秒（記号 \(\mathrm{s}\) ）は、光速度<a class="notes" href="#note1">*1</a> \(c\) およびセシウム周波数<a class="notes" href="#note2">*2</a> \(\Delta\nu_{\textrm{Cs}}\) によって定義される。</p>
+    <p>定義定数 \(h,\ c,\ \Delta\nu_{\textrm{Cs}}\) を用いて、キログラムは以下のように厳密に表現することができる。\begin{align}
+      1\ \textrm{kg}
+      & = \dfrac{(299\ 792\ 458)^2}{(6.626\ 070\ 15\times10^{−34})(9\ 192\ 631\ 770)} \dfrac{h\ \Delta\nu_{\textrm{Cs}}}{c^2} \\[8pt]
+      & \approx 1.475\ 5214\times10^{40}\ \dfrac{h\ \Delta\nu_{\textrm{Cs}}}{c^2}
+    \end{align}</p>
+    <footer>定義は国際度量衡局（BIPM）の<cite><a href="https://www.bipm.org/fr/publications/si-brochure/" target="_blank">国際単位系（SI）第9版</a></cite>による。日本語訳は<cite><a href="https://unit.aist.go.jp/nmij/public/report/SI_9th/" target="_blank">SI文書第9版(2019)日本語版及び関連資料</a></cite>（産業技術総合研究所 計量標準総合センター）で読める。</footer>
+  </figure>
+  <p>プランク定数と光速度、それにセシウム周波数が出てきました。プランク定数と光速度は定数だと理解しやすいのでいいとして、セシウム周波数（これも定数ですが）と言われてもピンと来ないところがあります。せっかく光速度を使うので、光とかの周波数で表してみたいところです。</p>
+  <p>なお、光の周波数はセシウム周波数をもとに測定するので、ここから先は不確かさのある話になります。</p>
+  <aside class="notes">
+    <small id="note1">*1 真空中の光の速さ \(c = 299\ 792\ 458 \textrm{ m/s}\) 。定義値。</small>
+    <small id="note2">*2 セシウム133原子の摂動を受けない基底状態の超微細構造遷移周波数 \(\Delta\nu_{\textrm{Cs}} = 9\ 192\ 631\ 770 \textrm{ Hz}\) 。定義値。</small>
+  </aside>
+  <nav class="mokuji"><ol id="mokuji"><script src="./js/mokuji.js"></script></ol></nav>
+  <section>
+    <h3>光子1個で考える</h3>
+    <p><a href="https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0" target="_blank">Wikipediaさん</a>にはこんな記載があります：
+    <blockquote>
+      キログラムは周波数が \(\frac{(299 792 458)^2}{6.626 069 57}\times10^{34}\) ヘルツの光子のエネルギーに等価な質量である。
+    </blockquote>
+    <em>この分母は採用されなかった定義値に基づくものなので要注意</em>とはいえ、考え方は悪くないように思えます。導出には2つの関係式を使います。</p>
+    <figure class="formula def">
+      <figcaption>質量とエネルギーの等価性</figcaption>
+      エネルギー \(E\) は、光速度の2乗を比例定数として質量 \(m\) と等価である。\[
+        E = mc^2
+      \]
+    </figure>
+    <figure class="formula def">
+      <figcaption>光子のエネルギー</figcaption>
+      光子1個が持つエネルギー \(\epsilon\) は、光子の振動数 \(\nu\) に比例する。\[
+        \epsilon = h\nu
+      \]ここで、 \(h\) はプランク定数。
+    </figure>
+    <p>\(E=\epsilon\) として2つの式から変形すると、\[
+      m = \dfrac{E}{c^2} = \dfrac{h\nu}{c^2}
+    \]となり、光子の振動数を質量に換算できることがわかります。 \(m = 1 \textrm{kg}\) となるような \(\nu\) は、\begin{align}
+      \nu
+      & = \dfrac{mc^2}{h} \\[8pt]
+      & = \dfrac{(299\ 792\ 458)^2}{6.626\ 070\ 15} \times 10^{34}\ \textrm{Hz} \\[8pt]
+      & \approx 1.356\ 392\ 49 \times 10^{50}\ \textrm{Hz}
+    \end{align}となります。</p>
+  </section>
+  <section>
+    <h3>10の50乗？！</h3>
+    <p>振動数が \(10^{50}\) オーダーってどのくらいでしょうか。単純に逆数を取った周期で言えば約 \(7.372\ 497\ 32 \times 10^{-51}\ \textrm{s}\) 、光速度から波長を計算すれば約 \(2.210\ 219\ 09 \times 10^{-42}\ \textrm{m}\) です。プランク時間<a class="notes" href="#note3">*3</a>よりも短ければプランク長<a class="notes" href="#note4">*4</a>よりも短い。どんな光やねん。電磁波でいられるんでしょうか？「粒子性と波動性を併せ持つ」という話よりも大変なことになりそう。</p>
+    <p>まあこうなるのも当然っちゃ当然で、おそらく光子 \(1\) 個という素粒子スケールの世界から \(1\textrm{kg}\) という人間的な大きさを導き出そうとしているからのような感じがします。<strong>人間を構成する原子の数が1穣（\(10^{28}\)）個程度</strong>と言いますし、規模感の違いは已むを得ません<a class="notes" href="#note5">*5</a>。光子1個に定義を背負わせるには荷が重すぎました。</p>
+    <aside class="notes">
+      <small id="note3">*3 プランク時間は \(5.39116(13)\times 10^{−44} \textrm{ s}\) 。</small>
+      <small id="note4">*4 プランク長は \(1.616229(38)\times 10^{−35} \textrm{ m}\) 。</small>
+      <small id="note5">*5 ただ逆に、食い違いが \(10^{7}\) 程度で済んでると言われれば、意外な感じもします。</small>
+    </aside>
+  </section>
+  <section>
+    <h3>たくさんの可視光に来てもらう</h3>
+    <p>というわけで、光子の個数 \(k\) と波長 \(\lambda\) を導入して、ピンとくる量を探ってみましょう。</p>
+    <p>\(E = k\dfrac{hc}{\lambda}\) なので、代入\[
+      m = \dfrac{E}{c^2} = \dfrac{kh}{c\lambda}
+    \]を \(k\) について整理すると\begin{align}
+       k
+       & = \dfrac{mc}{h}\lambda \\[8pt]
+       & = \dfrac{299\ 792\ 458}{6.626\ 070\ 15 \times 10^{−34}}\lambda \\[8pt]
+       & \approx (4.524\ 438\ 34 \times 10^{41}) \lambda
+    \end{align}となります。 \(\lambda\) を特定の波長の可視光とすると \(10^{-7}\) オーダーですから、 \(k\) は \(10^{11}\) モル程度となります。馴染みやすい桁数になってきました。</p>
+    <p>このへんで、アボガドロ定数 \(N_A = 6.022\ 140\ 76 \times 10^{23} \textrm{ mol}^{-1}\) を呼んできて\begin{align}
+      k & = x \times 6.022\ 140\ 76 \times 10^{23} \\
+      \lambda & = y \times 10^{-9} \\
+    \end{align}と置いてみます。これで \(x\) の単位はモルに、 \(y\) の単位はナノメートルになります。代入して、\begin{align}
+
+      x \times 6.022\ 140\ 76 \times 10^{23}
+      & = \dfrac{299\ 792\ 458}{6.626\ 070\ 15 \times 10^{−34}} \times y \times 10^{-9} \\[8pt]
+
+      x \times 2^2 \cdot 563 \cdot 267413 \times 10^{15}
+      & = \dfrac{2 \cdot 7 \cdot 73 \cdot 293339}{3 \cdot 5 \cdot 7 \cdot 6310543 \times 10^{−42}} \times y \times 10^{-9} \\[8pt]
+
+      \dfrac{x}{2 \cdot 7 \cdot 73 \cdot 293339}
+      & = \dfrac{y}{3 \cdot 5 \cdot 7 \cdot 6310543 \cdot 2^2 \cdot 563 \cdot 267413} \times 10^{18} \\[8pt]
+
+      \dfrac{x}{2 \cdot 73 \cdot 293339 \times 10^{4}}
+      & = \dfrac{y}{3 \cdot 6310543 \cdot 2 \cdot 563 \cdot 267413 \times 10^{-13}} \\[8pt]
+
+      \dfrac{x}{4.282\ 7494 \times 10^{11}}
+      & = \dfrac{y}{570.044\ 673\ 270\ 4902} \\[8pt]
+
+    \end{align}はい。これなら正確だしわかりやすいですね。</p>
+    <figure class="formula def">
+      <figcaption>\(1\textrm{kg}\) の量</figcaption>
+      キログラムは、<em>波長が \(570.044\ 673\ 270\ 4902\) ナノメートルである光子 \(4.282\ 7494 \times 10^{11}\) モルぶんのエネルギーの合計</em>に等価な質量である。ここで、数値は定義定数 \(h,\ c,\ N_A\) を用いて、正確に\begin{align}
+        570.044\ 673\ 270\ 4902 \textrm{ nm} & = \dfrac{hN_A}{7} \times 10^{4} \textrm{ mol m J}^{-1} \textrm{ s}^{-1} \\
+        4.282\ 7494 \times 10^{11} \textrm{ mol} & = \dfrac{c}{7} \times 10^{4} \textrm{ mol s m}^{-1} \\
+      \end{align}である。
+    </figure>
+    <p>波長がおよそ \(570 \textrm{ nm}\) の電磁波は可視光であり、緑に近い黄色です。その光子約 \(428 \textrm{ Gmol}\) （ギガモル）というのは、ざっくり「<b>日本の国土面積に降り注ぐ真夏の直射日光1時間半ぶん</b>」くらいです<a class="notes" href="#note6">*6</a>。急にめちゃくちゃ曖昧な量になってしまいましたが、つまりはざっくりこれくらいです。</p>
+    <figure class="gallery" id="plots">
+      <figure>
+        <img src="./img/1kg_japan.png" alt="光による1kgの概算">
+        <figcaption>これの約1時間半ぶん</figcaption>
+      </figure>
+    </figure>
+    <p>ちなみに、双方を \(\frac{7}{10}\) 倍して、正確に\begin{align}
+        399.031\ 271\ 289\ 343\ 14 \textrm{ nm} & = hN_A \times 10^{3} \textrm{ mol m J}^{-1} \textrm{ s}^{-1} \\
+        2.997\ 924\ 58 \times 10^{11} \textrm{ mol} & = c \times 10^{3} \textrm{ mol s m}^{-1} \\
+      \end{align}としてもいいかもしれません。ギリギリ可視光の紫。紫外線に片足突っ込んでるかも。</p>
+    <aside class="notes">
+      <small id="note6">*6 光量子束密度を \(0.002 \textrm{ mol m}^{-2}\textrm{ s}^{-1}\) 程度として概算。</small>
+    </aside>
+  </section>
+  <section>
+    <h3>全国的に晴れた日は</h3>
+    <p>1～2時間くらい外に出て歩いてみると「ああ、日本中で \(1 \textrm{kg}\) を受け止めてるんだなあ」と思えるかというと、<strong>たぶん間違ってます</strong>。ちゃんと日光のスペクトル解析して、周波数ごとのエネルギーを積分してください。</p>
+    <p>素因数分解し始めたあたりで気付かれたかと思いますが、<em>本記事は物理学ではなく数学のノリで執筆しています</em>。物理量がマジで厳密な仮想世界のお話ということで、ここはひとつお納めください<a class="notes" href="#note7">*7</a>。</p>
+    <p>ついでなので、<i title="SIの定義定数値の">意味深な</i>素因数分解を並べておきます。</p>
+    <figure class="formula def">
+      <p>\begin{align}
+        9192631770 & = 2 \cdot 3^2 \cdot 5 \cdot 7^2 \cdot 47 \cdot 44351 \\
+        299792458 & = 2 \cdot 7 \cdot 73 \cdot 293339 \\
+        662607015 & = 3 \cdot 5 \cdot 7 \cdot 6310543 \\
+        1602176634 & = 2 \cdot 3^2 \cdot 19 \cdot 389 \cdot 12043 \\
+        1380649 & = 73 \cdot 18913 \\
+        602214076 & = 2^2 \cdot 563 \cdot 267413 \\
+        683 & = 683 \\
+      \end{align}</p>
+    </figure>
+    <p>それでは。</p>
+    <aside class="notes">
+      <small id="note7">*7 現実の物理世界には測定誤差とか相対不確かさとか有効数字とかがあります。通常のコンピュータ上の仮想世界でも、浮動小数点演算でやっていく限りは誤差が出ます。有理数の多倍長計算世界ですね。</small>
+    </aside>
+  </section>
+
+</article>
+<footer>
+  <a href="./">ホームへ</a>
+</footer>
+</body>
+</html>
