@@ -20,8 +20,14 @@ header{
 header time{
   font-size:small;
 }
-header time:before{
-  content:"最終更新:";
+header .datetime{
+  font-size:small;
+}
+header .datetime.publicated:before{
+  content:"公開日:";
+}
+header .datetime.modified:before{
+  content:"更新日:";
 }
 h3{
   padding:10px;
