@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=yes,initial-scale=1.0">
+    <meta name="keywords" content="緯度,経度,格子点,経緯度交会点,日本標準時子午線,東経135度,北緯35度,東経140度,北緯40度">
+    <meta name="description" content="日本地図に格子を重ね、緯度経度がともに整数になる地点を視覚化します。">
+    <meta property="og:url" content="https://nowanowa.github.io/note/img/latticelatlong.html">
+    <meta property="og:title" content="緯度経度の格子点">
+    <meta property="og:description" content="日本地図に格子を重ね、緯度経度がともに整数になる地点を視覚化します。">
+    <meta property="og:image" content="https://nowanowa.github.io/note/clip/latticelatlong.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creater" content="@Minorin_Minor">
+    <meta name="twitter:site" content="@Minorin_Minor">
+    <title>緯度経度の格子点</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""></script>
+    <style>
+html,body{
+  margin: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#myMap{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.panel{
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+  background: #fff8;
+}
+.panel_close{
+  float: right;
+  font-size: xx-large;
+  cursor: pointer;
+  padding: 0 4px;
+}
+    </style>
+    <script>
+document.addEventListener('DOMContentLoaded', (e) => {
+  document.querySelector('.panel_close').addEventListener('click', () => {
+    const button = document.querySelector('.panel_close');
+    const content = document.querySelector('.panel_content');
+    const icon = button.textContent;
+    if (icon === '×') {
+      button.textContent = '≡';
+      content.style.display = 'none';
+    } else {
+      button.textContent = '×';
+      content.style.display = '';
+    }
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div id="myMap"></div>
+    <nav class="panel">
+      <div class="panel_close">×</div>
+      <form name="settings" class="panel_content">
+        <div>緯度経度の格子点</div>
+        <div><label><input type="checkbox" name="monuments">経緯度記念碑</label></div>
+        <table>
+          <tr>
+            <th>緯度</th>
+            <td><label><input type="checkbox" name="lat15" checked>15度</label></td>
+            <td><label><input type="checkbox" name="lat5" checked>5度</label></td>
+            <td><label><input type="checkbox" name="lat1" checked>1度</label></td>
+            <td><label><input type="checkbox" name="lat1/10">1/10度</label></td>
+            <td><label><input type="checkbox" name="lat1/60">1/60度</label></td>
+          </tr>
+          <tr>
+            <th>経度</th>
+            <td><label><input type="checkbox" name="long15" checked>15度</label></td>
+            <td><label><input type="checkbox" name="long5" checked>5度</label></td>
+            <td><label><input type="checkbox" name="long1" checked>1度</label></td>
+            <td><label><input type="checkbox" name="long1/10">1/10度</label></td>
+            <td><label><input type="checkbox" name="long1/60">1/60度</label></td>
+          </tr>
+        </table>
+      </form>
+    </nav>
+  </body>
+  <script>
+class MyPoints {
+  map;
+  pointData = [];
+  pointObjects = [];
+  constructor(map, pointsArray) {
+    this.map = map;
+    pointsArray.forEach((p, i) => {
+      this.pointData.push(p);
+    });
+  }
+  placePoints() {
+    this.pointData.forEach((p, i) => {
+      this.pointObjects.push(L.marker([p.lat, p.long]).addTo(this.map).bindPopup(p.name));
+    });
+  }
+  removeAllPoints() {
+    while (this.pointObjects.length > 0) {
+      this.map.removeLayer(this.pointObjects.pop());
+    }
+  }
+}
+
+class ParallelLines {
+  map;
+  style = {
+    '15': {
+      'color': '#66b',
+      'weight': 3,
+      'opacity': 0.8
+    },
+    '5': {
+      'color': '#669',
+      'weight': 2,
+      'opacity': 0.8
+    },
+    '1': {
+      'color': '#669',
+      'weight': 2,
+      'opacity': 0.6
+    },
+    '1/10': {
+      'color': '#248',
+      'weight': 1,
+      'opacity': 0.6
+    },
+    '1/60': {
+      'color': '#66b',
+      'weight': 1,
+      'opacity': 0.4
+    }
+  };
+  lat = { from: 20, to: 46 };
+  long = { from: 122, to: 154 };
+  lineObjects = [];
+  constructor(map) {
+    this.map = map;
+  }
+  drawParallelLines(from, to, skip, startLat, startLong, endLat, endLong, typeSelect) {
+    for (let i = from; i <= to; i++) {
+      if (skip(i)) continue;
+      const line = L.polyline([
+        [startLat(i), startLong(i)],
+        [endLat(i), endLong(i)]
+      ], this.style[typeSelect(i)]).addTo(this.map);
+      this.lineObjects.push(line);
+    }
+  }
+  removeAllLines() {
+    while (this.lineObjects.length > 0) {
+      this.map.removeLayer(this.lineObjects.pop());
+    }
+  }
+  drawLines(direction, accuracyString) {
+    if (direction === 'lat') {
+      let md, a, b, skip;
+      switch (accuracyString) {
+        case '15':
+          skip = i => i % 15 !== 0;
+          md = 'mul';
+          break;
+        case '5':
+          skip = i => i % 5 !== 0 || i % 15 === 0;
+          md = 'mul';
+          break;
+        case '1':
+          skip = i => i % 5 === 0;
+          md = 'mul';
+          break;
+        case '1/10':
+          md = 'div';
+          a = 10;
+          b = 10;
+          break;
+        case '1/60':
+          md = 'div';
+          a = 60;
+          b = 6;
+          break;
+        default:
+          return;
+      }
+      if (md === 'mul') {
+        this.drawParallelLines(
+          this.lat.from, this.lat.to,
+          skip,
+          la => la, lo => this.long.from,
+          la => la, lo => this.long.to,
+          la => accuracyString
+        );
+      } else {
+        this.drawParallelLines(
+          this.lat.from * a, this.lat.to * a,
+          la => la % b === 0,
+          la => la / a, lo => this.long.from,
+          la => la / a, lo => this.long.to,
+          la => accuracyString
+        );
+      }
+    } else {
+      let md, a, b, skip;
+      switch (accuracyString) {
+        case '15':
+          skip = i => i % 15 !== 0;
+          md = 'mul';
+          break;
+        case '5':
+          skip = i => i % 5 !== 0 || i % 15 === 0;
+          md = 'mul';
+          break;
+        case '1':
+          skip = i => i % 5 === 0;
+          md = 'mul';
+          break;
+        case '1/10':
+          md = 'div';
+          a = 10;
+          b = 10;
+          break;
+        case '1/60':
+          md = 'div';
+          a = 60;
+          b = 6;
+          break;
+        default:
+          return;
+      }
+      if (md === 'mul') {
+        this.drawParallelLines(
+          this.long.from, this.long.to,
+          skip,
+          la => this.lat.from, lo => lo,
+          la => this.lat.to,   lo => lo,
+          lo => accuracyString
+        );
+      } else {
+        this.drawParallelLines(
+          this.long.from * a, this.long.to * a,
+          lo => lo % b === 0,
+          la => this.lat.from, lo => lo / a,
+          la => this.lat.to,   lo => lo / a,
+          lo => accuracyString
+        );
+      }
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', (e) => {
+  const map = L.map('myMap', {
+    center: [35, 135],
+    zoom: 7,
+  });
+
+  const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+  });
+  tileLayer.addTo(map);
+
+  const pos = new MyPoints(map, [
+    { "lat": 40.002742260879685, "long": 139.9966512983019, "name": "経緯度交会点" },
+    { "lat": 39.999037752335596, "long": 141.23848868400336, "name": "北緯40度モニュメント" },
+    { "lat": 35.00324431019979, "long": 135.86355938020102, "name": "北緯35度線モニュメント" },
+    { "lat": 35.693065844090974, "long": 135.00307250896486, "name": "最北子午線塔" },
+    { "lat": 35.00321400556469, "long": 134.99722673927536, "name": "経緯度交差点標柱" },
+    { "lat": 35.00001754374984, "long": 135.00004099424885, "name": "日本のへそモニュメント" },
+    { "lat": 34.7980974691224, "long": 134.99996059628504, "name": "東経135度子午線時計塔" },
+    { "lat": 34.64969510963924, "long": 135.0013113794596, "name": "日本標準時子午線標示柱" },
+    { "lat": 34.28075429807381, "long": 135.00000774876753, "name": "友ヶ島子午線広場" },
+    { "lat": 33.562617788002925, "long": 133.55664912742336, "name": "地球33番地" },
+    { "lat": 30.99949362199725, "long": 130.66530415149174, "name": "北緯31度線モニュメント" }
+  ]);
+
+  const pls = new ParallelLines(map);
+
+  const draw = ((p, l) => {
+    return (eve) => {
+      p.removeAllPoints();
+      l.removeAllLines();
+      const setting = document.forms['settings'];
+      if (setting['monuments'].checked) {
+        p.placePoints();
+      }
+      for (let d of ['lat', 'long']) {
+        for (let a of ['15', '5', '1', '1/10', '1/60']) {
+          if (setting[d + a].checked) {
+            l.drawLines(d, a);
+          }
+        }
+      }
+    };
+  })(pos, pls);
+  draw();
+  document.forms['settings'].addEventListener('change', draw);
+
+  const drawParallelLines00000 = (from, to, skip, startLat, startLong, endLat, endLong, typeSelect) => {
+    for (let i = from; i <= to; i++) {
+      if (skip(i)) continue;
+      L.polyline([
+        [startLat(i), startLong(i)],
+        [endLat(i), endLong(i)]
+      ], style[typeSelect(i)]).addTo(map);
+    }
+  };
+});
+  </script>
+</html>
