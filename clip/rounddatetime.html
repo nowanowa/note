@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=yes,initial-scale=1.0">
+    <meta name="keywords" content="記念日,1万日,10000日,1万日記念日,10000日記念日,還暦,大還暦,天寿,100年,1000ヶ月,10億秒,2147483648秒,2038年問題,2085978496秒,2036年問題">
+    <meta name="description" content="起点日時からぴったりの時間が経過した日時を一覧します。">
+    <meta property="og:url" content="https://nowanowa.github.io/note/clip/rounddatetime.html">
+    <meta property="og:title" content="ぴったり日時">
+    <meta property="og:description" content="起点日時からぴったりの時間が経過した日時を一覧します。">
+    <meta property="og:image" content="https://nowanowa.github.io/note/img/rounddatetime.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creater" content="@3nowanowa40">
+    <meta name="twitter:site" content="@3nowanowa40">
+    <title>ぴったり日時</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""></script>
+    <style>
+a.twittershare{
+  padding: 4px 8px;
+  border-radius: 128px;
+  background-color: #1d9bf0;
+  color: #fff;
+  font-size: x-small;
+  text-decoration: none;
+}
+a.twittershare:hover{
+  background-color: #0c7abf;
+}
+a.twittershare i{
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  width: 14px;
+  height: 14px;
+  background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2072%2072%22%3E%3Cpath%20fill%3D%22none%22%20d%3D%22M0%200h72v72H0z%22%2F%3E%3Cpath%20class%3D%22icon%22%20fill%3D%22%23fff%22%20d%3D%22M68.812%2015.14c-2.348%201.04-4.87%201.744-7.52%202.06%202.704-1.62%204.78-4.186%205.757-7.243-2.53%201.5-5.33%202.592-8.314%203.176C56.35%2010.59%2052.948%209%2049.182%209c-7.23%200-13.092%205.86-13.092%2013.093%200%201.026.118%202.02.338%202.98C25.543%2024.527%2015.9%2019.318%209.44%2011.396c-1.125%201.936-1.77%204.184-1.77%206.58%200%204.543%202.312%208.552%205.824%2010.9-2.146-.07-4.165-.658-5.93-1.64-.002.056-.002.11-.002.163%200%206.345%204.513%2011.638%2010.504%2012.84-1.1.298-2.256.457-3.45.457-.845%200-1.666-.078-2.464-.23%201.667%205.2%206.5%208.985%2012.23%209.09-4.482%203.51-10.13%205.605-16.26%205.605-1.055%200-2.096-.06-3.122-.184%205.794%203.717%2012.676%205.882%2020.067%205.882%2024.083%200%2037.25-19.95%2037.25-37.25%200-.565-.013-1.133-.038-1.693%202.558-1.847%204.778-4.15%206.532-6.774z%22%2F%3E%3C%2Fsvg%3E);
+}
+a.lineshare{
+  padding: 4px 8px;
+  border-radius: 128px;
+  background-color: #06c755;
+  color: #fff;
+  font-size: x-small;
+  text-decoration: none;
+}
+a.lineshare:hover{
+  background-color: #05b34d;
+}
+a.lineshare i{
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  width: 14px;
+  height: 14px;
+  background: url(https://www.line-website.com/social-plugins/img/common/line_v3@3x.png)  0 center no-repeat;
+  background-size: 14px auto;
+}
+.presetform{
+  margin: 8px 0;
+  text-align: center;
+}
+.presetform .selectpreset,
+.presetform .textinput{
+  display: inline-block;
+  width: 16em;
+  text-align: left;
+}
+.epochform,.epochform select{
+  font-size: x-large;
+}
+.epochform{
+  text-align: center;
+}
+.epochform .epoch-container{
+  display: inline-block;
+  margin: 4px 0;
+  text-align: left;
+}
+.epochform .epoch-container.unit-date,.epochform .epoch-container.unit-date select{
+  color: #e10;
+}
+.epochform .epoch-container.unit-seconds,.epochform .epoch-container.unit-seconds select{
+  color: #157;
+}
+#roundlist{
+  position: relative;
+}
+#roundlist h3{
+  margin: 16px 0;
+  padding: 8px 0;
+  background: #57f6c1;
+  text-align: center;
+}
+#roundlist h3.open{
+  cursor: zoom-in;
+}
+#roundlist h3.open:after{
+  content: ' ↕';
+}
+#roundlist h3.close{
+  cursor: zoom-out;
+}
+#roundlist h3.close:after{
+  content: ' ⮹';
+}
+.timeline dl,.timeline dt,.timeline dd{
+  margin: 0;
+}
+.timeline{
+  position: relative;
+  left: calc(50% - 1px);
+  width: calc(50% - 1px);
+  min-height: 4em;
+  margin: 2em 0;
+  border-left: 2px solid #57f6c1;
+}
+.timeline .roundpoint{
+  position: absolute;
+  left: -9px;
+  top: 0px;
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border: 2px solid #57f6c1;
+  border-radius: 8px;
+}
+.timeline .roundpoint.unit-year,
+.timeline .roundpoint.unit-month,
+.timeline .roundpoint.unit-date{
+  background-color: #f77;
+  color: #e10;
+}
+.timeline .roundpoint.unit-hours,
+.timeline .roundpoint.unit-minutes,
+.timeline .roundpoint.unit-seconds{
+  background-color: #88b;
+  color: #157;
+}
+.timeline .roundpoint .label{
+  position: absolute;
+  right: 20px;
+  top: -0.5em;
+  white-space: nowrap;
+  font-size: xx-large;
+}
+.timeline .roundpoint .datetime{
+  position: absolute;
+  left: 20px;
+  bottom: 0;
+  height: 1.2em;
+  white-space: nowrap;
+  font-size: large;
+  font-weight: bold;
+}
+.timeline .roundpoint .timestamp{
+  position: absolute;
+  left: 20px;
+  top: 1em;
+  height: 1.2em;
+  white-space: nowrap;
+  font-size: small;
+  font-family: monospace;
+  color: #888;
+}
+.timeline .roundpoint .timestamp:before{
+  content: "timestamp: ";
+}
+.timeline .roundpoint.offset-15 .label,
+.timeline .roundpoint.offset-15 .datetime,
+.timeline .roundpoint.offset-15 .timestamp{
+  transform: translateY(-1.5rem);
+}
+.timeline .roundpoint.offset-10 .label,
+.timeline .roundpoint.offset-10 .datetime,
+.timeline .roundpoint.offset-10 .timestamp{
+  transform: translateY(-1rem);
+}
+.timeline .roundpoint.offset05 .label,
+.timeline .roundpoint.offset05 .datetime,
+.timeline .roundpoint.offset05 .timestamp{
+  transform: translateY(0.5rem);
+}
+.timeline .roundpoint.offset10 .label,
+.timeline .roundpoint.offset10 .datetime,
+.timeline .roundpoint.offset10 .timestamp{
+  transform: translateY(1rem);
+}
+h2{
+  text-align: center;
+  border-bottom: 1px solid #157;
+  color: #157;
+}
+.topnotice{
+  text-align: center;
+  font-size: small;
+}
+.timehandleform{
+  margin: 16px 0;
+  text-align: center;
+  font-size: small;
+}
+.timehandleform label{
+  display: inline-block;
+}
+aside.description{
+  margin: 0 auto;
+  width: 100%;
+  max-width: 960px;
+}
+aside.description h2{
+  text-align: left;
+}
+.timezonecomp{
+  border-collapse:collapse;
+  margin-left:auto;
+  margin-right:auto;
+}
+.timezonecomp tr:first-child{
+  border-top:2px solid #314;
+}
+.timezonecomp tr:last-child,
+.timezonecomp tr.border-bottom-bold{
+  border-bottom:2px solid #314;
+}
+.timezonecomp td.border-top{
+  border-top:1px solid #314;
+}
+.timezonecomp td.border-bottom{
+  border-bottom:1px solid #314;
+}
+.timezonecomp th{
+  background: #def;
+}
+.timezonecomp th,
+.timezonecomp td{
+  padding-left:1em;
+  padding-right:1em;
+  text-align:center;
+}
+.timezonecomp .ellipsis{
+  font-size: x-small;
+}
+.timezonecomp .M201231{
+  background: #ddd;
+}
+.timezonecomp .M210101{
+  background: #ffb;
+}
+.timezonecomp .tztokyo{
+  color: #f00;
+  font-weight: bold;
+}
+footer{
+  background:#eee;
+  margin:-8px;
+  margin-top:0;
+  padding:20px;
+  text-align:center;
+}
+    </style>
+    <script>
+let timeoutID;
+function getUTC9NowISOString() {
+  const now = new Date();
+  now.setHours(now.getHours() + 9);
+  return now.toISOString();
+}
+function parseFreeInputDatetimeString(stri) {
+  const str = stri.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0));
+  if (str.length === 0) {
+    return {};
+  } else if (str.match(/^\d*$|^\d{8}\D*\d*$/)) {
+    const digits = str.replace(/\D/g, '');
+    const pairs = {};
+    for (let i = 0; i < digits.length; i++) {
+      const digit = digits[i];
+      let key = ['century', 'century', 'year', 'year', 'month', 'month', 'date', 'date', 'hours', 'hours', 'minutes', 'minutes', 'seconds', 'seconds'][i];
+      pairs[key] = (pairs[key] || '') + digit;
+    }
+    return pairs;
+  } else if (str.match(/^(\d+\D+){0,6}.*$/)) {
+    const digits = str.split(/\D+/);
+    const pairs = {};
+    for (let i = 0; i < digits.length; i++) {
+      if (digits[i].length === 0) {
+        break;
+      }
+      if (i === 0) {
+        let year = digits[i];
+        switch (year.length) {
+          case 1:
+            year = '0' + year;
+          case 2:
+            pairs['century'] = '19';
+            pairs['year'] = year;
+            break;
+          default:
+            pairs['century'] = ('0000' + year).slice(-4, -2);
+            pairs['year'] = ('0000' + year).slice(-2);
+            break;
+        }
+      } else {
+        const key = ['', 'month', 'date', 'hours', 'minutes', 'seconds'][i];
+        pairs[key] = ('00' + digits[i]).slice(-2);
+      }
+    }
+    return pairs;
+  }
+  return {};
+}
+class TempDatetimeString {
+  str;
+  pairs = {
+    century: '',
+    year: '',
+    month: '',
+    date: '',
+    hours: '',
+    minutes: '',
+    seconds: ''
+  }
+  constructor(str) {
+    this.str = str;
+    const parsed = parseFreeInputDatetimeString(str);
+    for (let key in this.pairs) {
+      this.pairs[key] = parsed[key];
+    }
+  }
+  setToForm(target) {
+    for (let key in this.pairs) {
+      target[key].value = this.pairs[key];
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', (e) => {
+  const onLoadDatetime = parseQueryParams() || new TempDatetimeString(getUTC9NowISOString());
+  onLoadDatetime.setToForm(document.forms['epoch']);
+  document.forms['preset'].reset();
+  timeoutID = setTimeout(generateTimeline, 512);
+
+  document.forms['preset'].addEventListener('input', (e) => {
+    if (timeoutID) clearTimeout(timeoutID);
+
+    const form = document.forms['preset'];
+    const datetimeString = (function(target, form) {
+      if (target.classList.contains('textinput')) {
+        if (target.value !== '') {
+          form['selectpreset'].value = '';
+        }
+        return target.value;
+      } else if (target.classList.contains('selectpreset')) {
+        if (target.value !== '') {
+          form['textinput'].value = '';
+        }
+        if (target.value === 'now') {
+          return getUTC9NowISOString();
+        }
+        return target.value;
+      } else {
+        return '';
+      }
+    })(e.target, form);
+    const datetime = new TempDatetimeString(datetimeString);
+    datetime.setToForm(document.forms['epoch']);
+
+    timeoutID = setTimeout(generateTimeline, 512);
+  });
+
+  document.forms['epoch'].addEventListener('change', (e) => {
+    if (timeoutID) clearTimeout(timeoutID);
+
+    const form = document.forms['epoch'];
+    const C = form.century.value || '00';
+    const Y = form.year.value || '00';
+    const M = form.month.value || '00';
+    const D = form.date.value || '00';
+    const h = form.hours.value || '00';
+    const m = form.minutes.value || '00';
+    const s = form.seconds.value || '00';
+    const text = C + Y + M + D + ' ' + h + m + s;
+    const set = document.forms['preset'];
+    set.selectpreset.value = '';
+    set.textinput.value = text;
+
+    timeoutID = setTimeout(generateTimeline, 512);
+  });
+
+  Array.from(document.querySelectorAll('#roundlist h3')).forEach((item, i) => {
+    item.addEventListener('click', ((h3) => {
+      return (e) => {
+        if (item.classList.contains('open')) {
+          item.nextElementSibling.style.display = '';
+          item.classList.toggle('open');
+          item.classList.toggle('close');
+        } else {
+          item.nextElementSibling.style.display = 'none';
+          item.classList.toggle('open');
+          item.classList.toggle('close');
+        }
+      };
+    })(item));
+  });
+
+  document.forms['timehandle'].addEventListener('change', (e) => {
+    const form = document.forms['epoch'];
+    const C = form.century.value;
+    const Y = form.year.value;
+    const M = form.month.value;
+    const D = form.date.value;
+    const h = form.hours.value;
+    const m = form.minutes.value;
+    const s = form.seconds.value;
+    createTweetLink(C + Y, M, D, h, m, s);
+    if (e.target === document.forms['timehandle']['leap']) {
+      timeoutID = setTimeout(generateTimeline, 512);
+    }
+    handleTimeDisplay();
+  });
+});
+function toString62(num) {
+  let n = Number(num);
+  let pm = '';
+  if (n === 0) {
+    return '0';
+  } else if (n < 0) {
+    n = -1 * n;
+    pm = '-';
+  }
+  let str = '';
+  while (n !== 0) {
+    const d = n % 62;
+    n = Math.floor(n / 62);
+    const digit = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[d];
+    str = digit + str;
+  }
+  return pm + str;
+}
+function fromString62(str) {
+  let num = 0;
+  let pm = +1;
+  for (const c of str) {
+    const val = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(c);
+    if (val < 0) {
+      pm = -1;
+      continue;
+    }
+    num = 62 * num  + val;
+  }
+  return pm * num;
+}
+function parseQueryParams() {
+  const search = window.location.search.substr(1);
+  let queryDatetime;
+  const handle = document.forms['timehandle'];
+  handle['leap'].checked = false;
+  handle['time'].checked = false;
+  search.split('&').forEach((item) => {
+    const pair = item.split('=');
+    switch (pair[0]) {
+      case 'dt':
+        queryDatetime = parseQueryDatetime(pair[1]);
+        break;
+      case 'l':
+        handle['leap'].checked = (pair[1] === 'i')
+      case 't':
+        handle['time'].checked = (pair[1] === 'i')
+      default:
+    }
+  });
+  return queryDatetime;
+}
+function parseQueryDatetime(str) {
+  let dtStr = ('0000' + fromString62(str.slice(0, 2))).slice(-4);
+  for (let i = 2; i < str.length; i++) {
+    dtStr += ('00' + fromString62(str[i])).slice(-2);
+  }
+  return new TempDatetimeString(dtStr);
+}
+function createTweetLink(Y, M, D, h, m, s) {
+  const dt = ('00' + toString62(Y)).slice(-2)
+    + ('0' + toString62(M)).slice(-1)
+    + ('0' + toString62(D)).slice(-1)
+    + ('0' + toString62(h)).slice(-1)
+    + ('0' + toString62(m)).slice(-1)
+    + ('0' + toString62(s)).slice(-1);
+
+  let q = '';
+  const handle = document.forms['timehandle'];
+  q += handle['leap'].checked ? '&l=i' : '';
+  q += handle['time'].checked ? '&t=i' : '';
+
+  const u = 'https://nowanowa.github.io/note/clip/rounddatetime.html?dt=' + dt + q;
+  document.forms['url']['url'].value = u;
+  const url = encodeURIComponent(u);
+  const text = encodeURIComponent(Y + '年' + M + '月' + D + '日' + h + '時' + m + '分' + s + '秒からのぴったり日時');
+  const a = document.querySelector('a.twittershare');
+  a.setAttribute('href', 'https://twitter.com/intent/tweet?url=' + url + '&text=' + text);
+  const l = document.querySelector('a.lineshare');
+  l.setAttribute('href', 'https://social-plugins.line.me/lineit/share?url=' + url);
+}
+function handleTimeDisplay() {
+  const target = document.querySelectorAll('.epoch-container.unit-seconds,.roundpoint .datetime .time,.roundpoint .timestamp,.roundpoint.unit-hours,.roundpoint.unit-minutes,.roundpoint.unit-seconds');
+
+  const hide = document.forms['timehandle']['time'].checked;
+  Array.from(target).forEach((item, i) => {
+    item.style.display = hide ? 'none' : '';
+  });
+};
+    </script>
+  </head>
+  <body>
+    <h1 style="text-align: center;">ぴったり日時タイムライン</h1>
+    <aside class="topnotice">日時はグレゴリオ暦/現行UTC+9によります(導入以前の日時については保証しません)。動作環境はja-jpロケール推奨。</aside>
+    <nav class="panel">
+      <form name="timehandle" class="timehandleform">
+        <label><input type="checkbox" name="leap" value="ignore">閏秒を無視する</label>
+        <label><input type="checkbox" name="time" value="ignore">時分秒を表示しない</label>
+      </form>
+      <h2>起点日時</h2>
+      <form name="preset" class="presetform" onsubmit="return false;">
+        <select class="selectpreset" name="selectpreset">
+          <option value="">カスタム</option>
+          <option value="1868-10-23">明治改元</option>
+          <option value="1888-01-01 00:00:00">日本標準時開始</option>
+          <option value="1912-07-30">大正改元</option>
+          <option value="1926-12-25">昭和改元</option>
+          <option value="1970-01-01 09:00:00">UNIXエポック</option>
+          <option value="1972-01-01 09:00:00">現行UTC開始</option>
+          <option value="1989-01-08 00:00:00">平成改元</option>
+          <option value="2000-01-01 20:58:55.816">J2000.0</option>
+          <option value="2019-05-01 00:00:00">令和改元</option>
+          <option value="now">ちょうどいま</option>
+        </select>
+        <input class="textinput" type="text" name="textinput" placeholder="数字でも入力可(YYYYMMDD hhmmss)">
+      </form>
+      <form name="epoch" class="epochform">
+        <div class="epoch-container unit-date">
+          <select name="century">
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20" selected>20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value=""></option>
+          </select>
+          <select name="year">
+            <option value="00">00</option>
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
+            <option value="32">32</option>
+            <option value="33">33</option>
+            <option value="34">34</option>
+            <option value="35">35</option>
+            <option value="36">36</option>
+            <option value="37">37</option>
+            <option value="38">38</option>
+            <option value="39">39</option>
+            <option value="40">40</option>
+            <option value="41">41</option>
+            <option value="42">42</option>
+            <option value="43">43</option>
+            <option value="44">44</option>
+            <option value="45">45</option>
+            <option value="46">46</option>
+            <option value="47">47</option>
+            <option value="48">48</option>
+            <option value="49">49</option>
+            <option value="50">50</option>
+            <option value="51">51</option>
+            <option value="52">52</option>
+            <option value="53">53</option>
+            <option value="54">54</option>
+            <option value="55">55</option>
+            <option value="56">56</option>
+            <option value="57">57</option>
+            <option value="58">58</option>
+            <option value="59">59</option>
+            <option value="60">60</option>
+            <option value="61">61</option>
+            <option value="62">62</option>
+            <option value="63">63</option>
+            <option value="64">64</option>
+            <option value="65">65</option>
+            <option value="66">66</option>
+            <option value="67">67</option>
+            <option value="68">68</option>
+            <option value="69">69</option>
+            <option value="70">70</option>
+            <option value="71">71</option>
+            <option value="72">72</option>
+            <option value="73">73</option>
+            <option value="74">74</option>
+            <option value="75">75</option>
+            <option value="76">76</option>
+            <option value="77">77</option>
+            <option value="78">78</option>
+            <option value="79">79</option>
+            <option value="80">80</option>
+            <option value="81">81</option>
+            <option value="82">82</option>
+            <option value="83">83</option>
+            <option value="84">84</option>
+            <option value="85">85</option>
+            <option value="86">86</option>
+            <option value="87">87</option>
+            <option value="88">88</option>
+            <option value="89">89</option>
+            <option value="90">90</option>
+            <option value="91">91</option>
+            <option value="92">92</option>
+            <option value="93">93</option>
+            <option value="94">94</option>
+            <option value="95">95</option>
+            <option value="96">96</option>
+            <option value="97">97</option>
+            <option value="98">98</option>
+            <option value="99">99</option>
+            <option value=""></option>
+          </select>年
+          <select name="month">
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value=""></option>
+          </select>月
+          <select name="date">
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
+            <option value=""></option>
+          </select>日
+        </div>
+        <div class="epoch-container unit-seconds">
+          <select name="hours">
+            <option value="00">00</option>
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value=""></option>
+          </select>時
+          <select name="minutes">
+            <option value="00">00</option>
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
+            <option value="32">32</option>
+            <option value="33">33</option>
+            <option value="34">34</option>
+            <option value="35">35</option>
+            <option value="36">36</option>
+            <option value="37">37</option>
+            <option value="38">38</option>
+            <option value="39">39</option>
+            <option value="40">40</option>
+            <option value="41">41</option>
+            <option value="42">42</option>
+            <option value="43">43</option>
+            <option value="44">44</option>
+            <option value="45">45</option>
+            <option value="46">46</option>
+            <option value="47">47</option>
+            <option value="48">48</option>
+            <option value="49">49</option>
+            <option value="50">50</option>
+            <option value="51">51</option>
+            <option value="52">52</option>
+            <option value="53">53</option>
+            <option value="54">54</option>
+            <option value="55">55</option>
+            <option value="56">56</option>
+            <option value="57">57</option>
+            <option value="58">58</option>
+            <option value="59">59</option>
+            <option value=""></option>
+          </select>分
+          <select name="seconds">
+            <option value="00">00</option>
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
+            <option value="32">32</option>
+            <option value="33">33</option>
+            <option value="34">34</option>
+            <option value="35">35</option>
+            <option value="36">36</option>
+            <option value="37">37</option>
+            <option value="38">38</option>
+            <option value="39">39</option>
+            <option value="40">40</option>
+            <option value="41">41</option>
+            <option value="42">42</option>
+            <option value="43">43</option>
+            <option value="44">44</option>
+            <option value="45">45</option>
+            <option value="46">46</option>
+            <option value="47">47</option>
+            <option value="48">48</option>
+            <option value="49">49</option>
+            <option value="50">50</option>
+            <option value="51">51</option>
+            <option value="52">52</option>
+            <option value="53">53</option>
+            <option value="54">54</option>
+            <option value="55">55</option>
+            <option value="56">56</option>
+            <option value="57">57</option>
+            <option value="58">58</option>
+            <option value="59">59</option>
+            <option value="60">60</option>
+            <option value=""></option>
+          </select>秒
+        </div>
+      </form>
+    </nav>
+    <main id="roundlist">
+      <h2>タイムライン</h2>
+      <form name="url" onsubmit="return false;" style="font-size: small; text-align: center;">
+        このタイムラインのURL
+        <input type="text" name="url" style="width: 320px; max-width: 90%;" onfocus="this.select();navigator.clipboard.writeText(this.value);">
+      </form>
+      <div style="text-align: center;">
+        <a href="https://twitter.com/intent/tweet" class="twittershare" target="_blank"><i></i>Twitterで共有</a>
+        <a href="https://social-plugins.line.me/lineit/share" class="lineshare" target="_blank"><i></i>LINEで送る</a>
+      </div>
+      <template id="roundpoint">
+        <dl class="roundpoint">
+          <dt class="label">9000日</dt>
+          <dd class="datetime">
+            <span class="date">2037-05-14</span>
+            <span class="time">13:52:12</span>
+          </dd>
+          <dd class="timestamp">5739503953</dd>
+        </dl>
+      </template>
+      <h3 class="close">～2年</h3>
+      <section id="timeline3" class="timeline"></section>
+      <h3 class="close">2年～100年</h3>
+      <section id="timeline120" class="timeline"></section>
+      <h3 class="close">100年～250年</h3>
+      <section id="timeline250" class="timeline"></section>
+    </main>
+    <aside class="description">
+      <h2>閏秒について</h2>
+      <p>1972年1月の第1回から2017年1月の第27回までに挿入された各+1秒が計算に入ります。<a href="https://jjy.nict.go.jp/QandA/data/leapsec.html" target="_blank">情報通信研究機構</a>（2021年10月22日閲覧）によれば2022年1月までは実施されない予定とのことなので、本アプリで2022年7月以前の時刻は確実な予定となりますが、<b>2022年7月1日9時以降</b>の時刻は閏秒の実施が無いと仮定した時刻を算出していることになります。</p>
+      <h2>現行UTCについて</h2>
+      <p>現行のUTC（1秒の単位にSI秒を採用し、1昼夜長とのずれ調整は閏秒により実施）が開始されたのは1972年1月1日9時(JST)です。従って、本アプリで起点日時を<b>1972年1月1日9時以前</b>とした場合、経過秒数はSI秒による値ではなく、この日時以前は旧UTCの秒で/この日時以降はSI秒で計算して合算した値、ということになります。</p>
+      <p>ちなみにUNIXエポックである1970年1月1日9時JSTは現行UTCの開始より昔です。</p>
+      <h2>日本標準時について</h2>
+      <p>日本標準時の開始は1888（明治21）年1月1日です。JavaScriptのDateクラスは、Asia/Tokyoタイムゾーンでのおよそそれ以前の日時についてはUTC+09:18:59（仮に東京地方時と呼ぶことにします）として解釈します。本アプリでは経過日時の計算を地方時の年月日時分秒表示に基づいて行うため、「日本標準時が東京地方時から連続的であると仮定した経過時間」を計算していることになります。この時間を跨ぐ計算では、<b>旧UTC秒の単位で18分59秒</b>が抜け落ちることになります。Dateクラスの仕様により1888年1月1日0時18分59秒以降が日本標準時として解釈されます（0時0分0秒じゃないの？と思えて腑に落ちませんが）ので、「1888-01-01T00:18:58+09:18:59の1秒後が1888-01-01T00:18:59+09:00:00である」と仮定していることになります。</p>
+      <p>従って、起点日時としては<b>1888年1月1日0時18分58秒以前</b>を指定した場合に、18分59秒の抜け落ちが発生することになります。</p>
+      <p>表にまとめると以下のようになります。</p>
+      <figure>
+        <table class="timezonecomp">
+          <tr class="border-bottom-bold">
+            <th>UTC</th><th>UTC+9</th><th>UTC+09:18:59</th>
+          </tr>
+          <tr>
+            <td class="M201231">:</td><td class="M201231">:</td><td class="M201231 tztokyo">:</td>
+            <td class="notice M201231">1887年12月31日</td>
+          </tr>
+          <tr>
+            <td class="M201231">06:00:00</td><td class="M201231">15:00:00</td><td class="M201231 tztokyo">15:18:59</td>
+          </tr>
+          <tr>
+            <td class="M201231">:</td><td class="M201231">:</td><td class="M201231 tztokyo">:</td>
+          </tr>
+          <tr>
+            <td class="M201231">14:41:01</td><td class="M201231">23:41:01</td><td class="M210101 tztokyo">00:00:00</td>
+          </tr>
+          <tr class="ellipsis">
+            <td class="M201231">：</td><td class="M201231">：</td><td class="M210101 tztokyo">：</td>
+          </tr>
+          <tr>
+            <td class="M201231">15:00:00</td><td class="M210101 border-top">00:00:00</td><td class="M210101 border-top">00:18:59</td>
+            <td class="notice border-top border-bottom" rowspan="2" style="text-align:left;">スキップされる<br>18分59秒</td>
+          </tr>
+          <tr class="ellipsis">
+            <td class="M201231">：</td><td class="M210101 border-bottom">：</td><td class="M210101 border-bottom">：</td>
+          </tr>
+          <tr>
+            <td class="M201231">15:18:59</td><td class="M210101 tztokyo">00:18:59</td><td class="M210101">00:37:58</td>
+            <td class="notice"></td>
+          </tr>
+          <tr>
+            <td class="M201231">:</td><td class="M210101 tztokyo">:</td><td class="M210101">:</td>
+          </tr>
+          <tr>
+            <td class="M210101">00:00:00</td><td class="M210101 tztokyo">09:00:00</td><td class="M210101">09:18:59</td>
+          </tr>
+          <tr>
+            <td class="M210101">:</td><td class="M210101 tztokyo">:</td><td class="M210101">:</td>
+            <td class="notice M210101">1888年1月1日</td>
+          </tr>
+        </table>
+        <figcaption style="text-align:center;font-size:small;">1888年1月1日付近のAsia/Tokyoタイムゾーンについて、Dateクラスは<span style="color:#f00;font-weight:bold;">赤太字の時刻</span>を採用します。</figcaption>
+      </figure>
+      <p>なお、以上の話は「JavaScriptではこのように実装されています」という話であり、<b>歴史上の日本の時間が実際にこうだったということではありません</b>。詳しくは<a href="http://eco.mtk.nao.ac.jp/koyomi/wiki/BBFEB9EF2FC6FCCBDCA4CECBDCBDE9BBD2B8E1C0FE.html" target="_blank">国立天文台による解説</a>や<a href="https://wiki.suikawiki.org/n/%E4%B8%AD%E5%A4%AE%E6%A8%99%E6%BA%96%E6%99%82" target="_blank">一般の方による調査</a>を参考にしてください。</p>
+      <p>私が読み取った解釈としては、日本標準時導入以前の時刻は各地の地方時で不定時法を用いて（現地の太陽の進行をもとに鐘を鳴らす）いたとして、暦の計算には明治5年まで（1872年まで）は京都（グリニッジとの時差9時間3分程度）が／1873（明治6）年～1887（明治20）年は東京（グリニッジとの時差9時間19分程度）が基準になっていた、というように読んでいます。</p>
+      <h2>日本夏時間について</h2>
+      <p>Asia/Tokyoタイムゾーンでは<b>1948（昭和23）年から1951（昭和26）年まで</b>の4回、4or5月～9月に夏時間（UTC+10）が導入されています。本アプリではこの期間についての計算結果の検証を行っていないため、表示される日時・タイムスタンプが意図しない値になっている可能性があります。</p>
+      <p>ちなみに夏時間法では夏時刻期間終了日は1日が25時間とされている（たとえば1948（昭和23）年9月11日（土）は0時から25時まであることになる）のですが、DateクラスtoLocaleStringの仕様では1948年9月12日（日）0時～1時が2回ある（1回目は日本夏時間UTC+10、2回目は日本標準時UTC+9）ように出力されます。</p>
+      <h2>グレゴリオ暦について</h2>
+      <p>グレゴリオ暦の導入は1582年10月15日（=ユリウス暦1582年10月5日）ですので、<b>ユリウス暦1582年10月4日以前</b>を起点日時に設定する場合は、グレゴリオ暦の日付へ変換してから入力してください。</p>
+      <p>また、日本にグレゴリオ暦が導入されたのは1873（明治6）年1月1日（=天保歴明治5年12月3日）ですので、<b>明治5年12月2日以前</b>を起点日時に設定する場合も、グレゴリオ暦の日付へ変換してから入力してください。</p>
+    </aside>
+    <footer>
+      <p style="font-size: small; text-align: center;">
+        このアプリを共有する<br>
+        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false" data-url="https://nowanowa.github.io/note/clip/rounddatetime.html">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script><br>
+        <div class="line-it-button" style="display:none;" data-lang="ja" data-type="share-a" data-ver="3" data-url="https://nowanowa.github.io/note/clip/rounddatetime.html" data-color="default" data-size="small" data-count="false"></div><script src="https://www.line-website.com/social-plugins/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
+      </p>
+      <p><a href="/note">ホームへ</a></p>
+    </footer>
+  </body>
+  <script>
+const leaps = [
+  { no: 27, date: '2017-01-01', timestamp: 1483228800, leap: +1 },
+  { no: 26, date: '2015-07-01', timestamp: 1435708800, leap: +1 },
+  { no: 25, date: '2012-07-01', timestamp: 1341100800, leap: +1 },
+  { no: 24, date: '2009-01-01', timestamp: 1230768000, leap: +1 },
+  { no: 23, date: '2006-01-01', timestamp: 1136073600, leap: +1 },
+  { no: 22, date: '1999-01-01', timestamp: 915148800, leap: +1 },
+  { no: 21, date: '1997-07-01', timestamp: 867715200, leap: +1 },
+  { no: 20, date: '1996-01-01', timestamp: 820454400, leap: +1 },
+  { no: 19, date: '1994-07-01', timestamp: 773020800, leap: +1 },
+  { no: 18, date: '1993-07-01', timestamp: 741484800, leap: +1 },
+  { no: 17, date: '1992-07-01', timestamp: 709948800, leap: +1 },
+  { no: 16, date: '1991-01-01', timestamp: 662688000, leap: +1 },
+  { no: 15, date: '1990-01-01', timestamp: 631152000, leap: +1 },
+  { no: 14, date: '1988-01-01', timestamp: 567993600, leap: +1 },
+  { no: 13, date: '1985-07-01', timestamp: 489024000, leap: +1 },
+  { no: 12, date: '1983-07-01', timestamp: 425865600, leap: +1 },
+  { no: 11, date: '1982-07-01', timestamp: 394329600, leap: +1 },
+  { no: 10, date: '1981-07-01', timestamp: 362793600, leap: +1 },
+  { no: 9, date: '1980-01-01', timestamp: 315532800, leap: +1 },
+  { no: 8, date: '1979-01-01', timestamp: 283996800, leap: +1 },
+  { no: 7, date: '1978-01-01', timestamp: 252460800, leap: +1 },
+  { no: 6, date: '1977-01-01', timestamp: 220924800, leap: +1 },
+  { no: 5, date: '1976-01-01', timestamp: 189302400, leap: +1 },
+  { no: 4, date: '1975-01-01', timestamp: 157766400, leap: +1 },
+  { no: 3, date: '1974-01-01', timestamp: 126230400, leap: +1 },
+  { no: 2, date: '1973-01-01', timestamp: 94694400, leap: +1 },
+  { no: 1, date: '1972-07-01', timestamp: 78796800, leap: +1 }
+];
+/*
+ * 閏秒の実施日一覧
+ * https://jjy.nict.go.jp/QandA/data/leapsec.html
+ */
+Date.prototype.leap = 0;
+Date.prototype.setLeap = function(oneORzero) {
+  this.leap = oneORzero;
+};
+Date.prototype.getLeap = function() {
+  return this.leap;
+};
+Date.prototype.resetLeap = function(start, aim) {
+  const myLeap = this.getLeap();
+  if (start === aim) {
+    const ts = this.getTimestamp();
+    const found = leaps.find(item => item.timestamp === ts + 1);
+    if (myLeap && found && found.leap === myLeap) {
+      this.setLeap(myLeap);
+    } else {
+      this.setLeap(0);
+    }
+    return aim;
+  } else if (start < aim) {
+    let arrival = aim;
+    const ascLeaps = Array.from(leaps).sort((a, b) => a.timestamp - b.timestamp);
+    //TODO: 正の閏秒前提
+    for (const leap of ascLeaps) {
+      if (leap.timestamp < start + 1) {
+        continue;
+      } else if (start + 1 === leap.timestamp) {
+        if (myLeap === 0 && leap.leap === +1) {
+          arrival -= leap.leap;
+        }
+        continue;
+      } else if (start + 1 < leap.timestamp && leap.timestamp < arrival) {
+        arrival -= leap.leap;
+        continue;
+      } else if (arrival === leap.timestamp) {
+        arrival -= leap.leap;
+        this.setLeap(leap.leap);
+        return arrival;
+      } else if (arrival < leap.timestamp) {
+        this.setLeap(0);
+        return arrival;
+      }
+    }
+    return arrival;
+  } else if (start > aim) {
+    //TODO: 今回は使わない
+    return aim;
+  }
+  this.setLeap(0);
+  return aim;
+}
+Date.prototype.addYear = function(y) {
+  this.setFullYear(this.getFullYear() + y);
+  this.resetLeap();
+  return this.getTime();
+};
+Date.prototype.addMonth = function(m) {
+  this.setMonth(this.getMonth() + m);
+  this.resetLeap();
+  return this.getTime();
+};
+Date.prototype.addDate = function(d) {
+  this.setDate(this.getDate() + d);
+  this.resetLeap();
+  return this.getTime();
+};
+Date.prototype.addHours = function(h, ignoreLeap) {
+  const startTimestamp = this.getTimestamp();
+  this.setHours(this.getHours() + h);
+  const aimTimeStamp = this.getTimestamp();
+  if (!ignoreLeap) {
+    this.setTime(this.resetLeap(startTimestamp, aimTimeStamp) * 1000);
+  } else {
+    this.setLeap(0);
+  }
+  return this.getTime();
+};
+Date.prototype.addMinutes = function(m, ignoreLeap) {
+  const startTimestamp = this.getTimestamp();
+  this.setMinutes(this.getMinutes() + m);
+  const aimTimeStamp = this.getTimestamp();
+  if (!ignoreLeap) {
+    this.setTime(this.resetLeap(startTimestamp, aimTimeStamp) * 1000);
+  } else {
+    this.setLeap(0);
+  }
+  return this.getTime();
+};
+Date.prototype.addSeconds = function(s, ignoreLeap) {
+  const startTimestamp = this.getTimestamp();
+  this.setSeconds(this.getSeconds() + s);
+  const aimTimeStamp = this.getTimestamp();
+  if (!ignoreLeap) {
+    this.setTime(this.resetLeap(startTimestamp, aimTimeStamp) * 1000);
+  } else {
+    this.setLeap(0);
+  }
+  return this.getTime();
+};
+Date.prototype.toMyFormattedString = function() {
+  const Y = ('0000' + this.getFullYear()).slice(-4);
+  const M = ('00' + (this.getMonth() + 1)).slice(-2);
+  const D = ('00' + this.getDate()).slice(-2);
+  const h = ('00' + this.getHours()).slice(-2);
+  const m = ('00' + this.getMinutes()).slice(-2);
+  const s = ('00' + (
+    this.getSeconds() + this.getLeap()
+  )).slice(-2);
+  return Y + '-' + M + '-' + D + ' ' + h + ':' + m + ':' + s;
+};
+Date.prototype.toMyDateString = function() {
+  const Y = ('0000' + this.getFullYear()).slice(-4);
+  const M = ('00' + (this.getMonth() + 1)).slice(-2);
+  const D = ('00' + this.getDate()).slice(-2);
+  return Y + '/' + M + '/' + D + '';
+};
+Date.prototype.toMyTimeString = function() {
+  const h = ('00' + this.getHours()).slice(-2);
+  const m = ('00' + this.getMinutes()).slice(-2);
+  const s = ('00' + (
+    this.getSeconds() + this.getLeap()
+  )).slice(-2);
+  return h + ':' + m + ':' + s + '';
+};
+Date.prototype.getTimestamp = function() {
+  return this.getTime() / 1000;
+}
+const rounds = [
+];
+const roundsOf = {
+  timeline3: [
+    { func: 'addDate', span: 100, unit: 'date', offset: '-10', label: '100日' },
+    { func: 'addDate', span: 343, unit: 'date', label: '7<sup>2</sup>週間' },
+    { func: 'addYear', span: 1, unit: 'year', label: '1年' },
+    { func: 'addDate', span: 700, unit: 'date', offset:'05', label: '100週間' },
+
+    { func: 'addSeconds', span: 1e+7, unit: 'seconds', label: '1000万秒' },
+    { func: 'addSeconds', span: 60**4, unit: 'seconds', label: '60<sup>4</sup>秒' },
+    { func: 'addSeconds', span: 2**24, unit: 'seconds', label: '2<sup>24</sup>秒' },
+    { func: 'addSeconds', span: 2**25, unit: 'seconds', label: '2<sup>25</sup>秒' },
+    { func: 'addHours', span: 1e+4, unit: 'hours', label: '1万時間' },
+    { func: 'addHours', span: 24**3, unit: 'hours', label: '24<sup>3</sup>時間' },
+    { func: 'addMinutes', span: 1e+6, unit: 'minutes', offset: '-10', label: '100万分' },//1.9年
+
+    { func: 'addSeconds', span: 0, unit: 'origin', label: '起点'}
+  ],
+  timeline120: [
+    { func: 'addSeconds', span: 2**26, unit: 'seconds', label: '2<sup>26</sup>秒' },
+    { func: 'addDate', span: 1000, unit: 'date', label: '1000日' },
+    { func: 'addDate', span: 2401, unit: 'date', label: '7<sup>3</sup>週間' },
+    { func: 'addMonth', span: 100, unit: 'month', offset: '-10', label: '100ヶ月' },
+
+    { func: 'addYear', span: 10, unit: 'year', label: '10年' },
+    { func: 'addYear', span: 12, unit: 'year', label: '12年' },
+    { func: 'addYear', span: 20, unit: 'year', label: '20年' },
+    { func: 'addYear', span: 24, unit: 'year', label: '24年' },
+    { func: 'addYear', span: 30, unit: 'year', label: '30年' },
+    { func: 'addYear', span: 36, unit: 'year', label: '36年' },
+    { func: 'addYear', span: 40, unit: 'year', label: '40年' },
+    { func: 'addYear', span: 48, unit: 'year', label: '48年' },
+    { func: 'addYear', span: 50, unit: 'year', label: '50年' },
+    { func: 'addYear', span: 60, unit: 'year', label: '60年(還暦)' },
+    { func: 'addYear', span: 70, unit: 'year', label: '70年(古希)' },
+    { func: 'addYear', span: 77, unit: 'year', offset: '10', label: '77年(喜寿)' },
+    { func: 'addYear', span: 80, unit: 'year', offset: '05', label: '80年(傘寿)' },
+    { func: 'addYear', span: 88, unit: 'year', label: '88年(米寿)' },
+    { func: 'addYear', span: 90, unit: 'year', offset: '05', label: '90年(卒寿)' },
+    { func: 'addYear', span: 99, unit: 'year', label: '99年(白寿)' },
+    { func: 'addYear', span: 100, unit: 'year', label: '100年' },
+    { func: 'addMonth', span: 1000, unit: 'month', label: '1000ヶ月' },
+    { func: 'addDate', span: 7000, unit: 'date', offset: '05', label: '1000週間' },
+    { func: 'addDate', span: 14000, unit: 'date', offset: '10', label: '2000週間' },
+    { func: 'addDate', span: 16807, unit: 'date', offset: '05', label: '7<sup>4</sup>週間' },
+    { func: 'addDate', span: 21000, unit: 'date', offset: '05', label: '3000週間' },
+    { func: 'addDate', span: 28000, unit: 'date', label: '4000週間' },
+    { func: 'addDate', span: 35000, unit: 'date', label: '5000週間' },
+    { func: 'addDate', span: 8192, unit: 'date', offset: '-10', label: '2<sup>13</sup>日' },
+    { func: 'addDate', span: 10000, unit: 'date', label: '10000日' },
+    { func: 'addDate', span: 16384, unit: 'date', label: '2<sup>14</sup>日' },
+    { func: 'addDate', span: 20000, unit: 'date', label: '20000日' },
+    { func: 'addDate', span: 30000, unit: 'date', label: '30000日' },
+    { func: 'addDate', span: 32768, unit: 'date', offset: '-10', label: '2<sup>15</sup>日' },
+
+    { func: 'addSeconds', span: 1e+8, unit: 'seconds', offset: '05', label: '1億秒' },
+    { func: 'addSeconds', span: 2**27, unit: 'seconds', label: '2<sup>27</sup>秒' },
+    { func: 'addSeconds', span: 2**28, unit: 'seconds', offset: '05', label: '2<sup>28</sup>秒' },//8.5年
+
+    { func: 'addHours', span: 1e+5, unit: 'hours', label: '10万時間' },
+    { func: 'addHours', span: 2e+5, unit: 'hours', offset: '05', label: '20万時間' },
+    { func: 'addHours', span: 3e+5, unit: 'hours', offset: '05', label: '30万時間' },
+    { func: 'addHours', span: 24**4, unit: 'hours', offset: '-15', label: '24<sup>4</sup>時間' },
+    { func: 'addHours', span: 4e+5, unit: 'hours', label: '40万時間' },
+    { func: 'addHours', span: 5e+5, unit: 'hours', offset: '-10', label: '50万時間' },//=(3000万分)
+    { func: 'addHours', span: 6e+5, unit: 'hours', offset: '05', label: '60万時間' },
+    { func: 'addHours', span: 7e+5, unit: 'hours', offset: '-10', label: '70万時間' },
+    { func: 'addHours', span: 8e+5, unit: 'hours', label: '80万時間' },
+    { func: 'addMinutes', span: 1e+7, unit: 'minutes', offset: '-10', label: '1000万分' },//19.01年
+    { func: 'addMinutes', span: 2e+7, unit: 'minutes', label: '2000万分' },
+    //3000万分は50万時間ぴったり
+    { func: 'addMinutes', span: 4e+7, unit: 'minutes', label: '4000万分' },
+    { func: 'addMinutes', span: 5e+7, unit: 'minutes', label: '5000万分' },//=(30億秒)
+    //6000万分は100万時間ぴったり
+    { func: 'addSeconds', span: 2**29, unit: 'seconds', label: '2<sup>29</sup>秒' },//17.01年
+    { func: 'addSeconds', span: 60**5, unit: 'seconds', label: '60<sup>5</sup>秒' },//24年7ヶ月ちょっと
+    { func: 'addSeconds', span: 1e+9, unit: 'seconds', label: '10億秒' },//31年8ヶ月ちょっと
+    { func: 'addSeconds', span: 2**30, unit: 'seconds', offset: '-10', label: '2<sup>30</sup>秒' },
+    { func: 'addSeconds', span: 2e+9, unit: 'seconds', label: '20億秒' },
+    { func: 'addSeconds', span: 2**31, unit: 'seconds', offset: '-10', label: '2<sup>31</sup>秒' }
+  ],
+  timeline250: [
+    { func: 'addYear', span: 108, unit: 'year', offset: '-10', label: '108年(茶寿)' },
+    { func: 'addYear', span: 111, unit: 'year', label: '111年(皇寿)' },
+    { func: 'addYear', span: 120, unit: 'year', label: '120年(大還暦)' },
+    { func: 'addYear', span: 144, unit: 'year', label: '12<sup>2</sup>年' },
+    { func: 'addYear', span: 250, unit: 'year', label: '250年(天寿)' },
+    { func: 'addMonth', span: 2000, unit: 'month', label: '2000ヶ月' },//166年8ヶ月
+    //3000ヶ月は250年ぴったり
+    { func: 'addDate', span: 42000, unit: 'date', offset: '05', label: '6000週間' },
+    { func: 'addDate', span: 49000, unit: 'date', label: '7000週間' },
+    { func: 'addDate', span: 56000, unit: 'date', label: '8000週間' },
+    { func: 'addDate', span: 63000, unit: 'date', offset: '05', label: '9000週間' },
+    { func: 'addDate', span: 70000, unit: 'date', offset: '10', label: '1万週間' },//191年6ヶ月ちょっと
+    { func: 'addDate', span: 40000, unit: 'date', label: '40000日' },
+    { func: 'addDate', span: 50000, unit: 'date', offset: '10', label: '50000日' },
+    { func: 'addDate', span: 60000, unit: 'date', label: '60000日' },
+    { func: 'addDate', span: 65536, unit: 'date', label: '2<sup>16</sup>日' },//179年5ヶ月ちょっと
+    { func: 'addHours', span: 9e+5, unit: 'hours', label: '90万時間' },
+    { func: 'addHours', span: 1e+6, unit: 'hours', offset: '-10', label: '100万時間' },//=(6000万分) //114.07年
+    { func: 'addHours', span: 2e+6, unit: 'hours', label: '200万時間' },
+    { func: 'addMinutes', span: 7e+7, unit: 'minutes', offset: '-10', label: '7000万分' },
+    { func: 'addMinutes', span: 8e+7, unit: 'minutes', offset: '-10', label: '8000万分' },
+    { func: 'addMinutes', span: 9e+7, unit: 'minutes', label: '9000万分' },
+    { func: 'addMinutes', span: 1e+8, unit: 'minutes', label: '1億分' },//=(60億秒) //190年ちょっと
+    { func: 'addSeconds', span: 4e+9, unit: 'seconds', label: '40億秒' },
+    { func: 'addSeconds', span: 2**32, unit: 'seconds', label: '2<sup>32</sup>秒' },//136年ちょっと
+    { func: 'addSeconds', span: 5e+9, unit: 'seconds', label: '50億秒' },
+    //60億秒は1億分ぴったり
+    { func: 'addSeconds', span: 7e+9, unit: 'seconds', label: '70億秒' },
+    { func: 'addSeconds', span: 8e+9, unit: 'seconds', label: '80億秒' }
+  ]
+};
+function generateRoundList(epoch, timelineId, ignoreLeap) {
+  const roundList = [];
+  for (const round of roundsOf[timelineId]) {
+    const date = new Date(epoch.getTime());
+    date.setLeap(epoch.getLeap());
+    date[round.func](round.span, ignoreLeap);
+    roundList.push({
+      date: date,
+      string: date.toMyFormattedString(),
+      dateString: date.toMyDateString(),
+      timeString: date.toMyTimeString(),
+      timestamp: date.getTimestamp(),
+      label: round.label,
+      unit: round.unit,
+      offset: round.offset
+    });
+  }
+  roundList.sort((a, b) => a.timestamp - b.timestamp);
+  return roundList;
+}
+function generateTimeline() {
+  timeoutID = undefined;
+  const ignoreLeap = document.forms['timehandle']['leap'].checked;
+
+  const form = document.forms['epoch'];
+  const C = form.century.value;
+  const Y = form.year.value;
+  const M = form.month.value;
+  const D = form.date.value;
+  const h = form.hours.value;
+  const m = form.minutes.value;
+  const s = form.seconds.value;
+  const epoch = new Date(C + Y, M - 1, D, h, m, s);
+  if (!ignoreLeap) {
+    const ts = epoch.getTimestamp();
+    const found = leaps.find(item => item.timestamp === ts);
+    if (s === '60' && found && found.leap === +1) {
+      epoch.addSeconds(-1);
+      epoch.setLeap(+1);
+    } else if (found && found.leap === -1) {
+      epoch.addSeconds(+1);
+    }
+  }
+
+  const rate = {
+    timeline3: 49 / (365.2425 * 24 * 60 * 60),
+    timeline120: 4 / (365.2425 * 24 * 60 * 60),
+    timeline250: 1.5 / (365.2425 * 24 * 60 * 60)
+  };
+  const unit = 'em';
+  const template = document.querySelector('#roundpoint');
+  for (const timelineId of ['timeline3', 'timeline120', 'timeline250']) {
+    const timeline = document.getElementById(timelineId);
+    Array.from(timeline.children).forEach((item) => {
+      if (item !== template) {
+        timeline.removeChild(item);
+      }
+    });
+    const roundList = generateRoundList(epoch, timelineId, ignoreLeap);
+    const origin = roundList[0].timestamp;
+    const limit = roundList[roundList.length - 1].timestamp;
+    const timespan = limit - origin;
+    timeline.style.height = (rate[timelineId] * timespan + 4) + 'em';
+    for (const round of roundList) {
+      const clone = template.content.cloneNode(true);
+      clone.querySelector('.label').innerHTML = round['label'];
+      clone.querySelector('.timestamp').textContent = round['timestamp'];
+      //clone.querySelector('.datetime').textContent = round['string'];
+      clone.querySelector('.date').textContent = round['dateString'];
+      clone.querySelector('.time').textContent = round['timeString'];
+      const point = clone.querySelector('.roundpoint');
+      point.style.top = rate[timelineId] * (round.timestamp - origin) + unit;
+      point.classList.add('unit-' + round['unit']);
+      if (round['offset']) {
+        point.classList.add('offset' + round['offset']);
+      }
+      timeline.appendChild(clone);
+    }
+  }
+
+  createTweetLink(C + Y, M, D, h, m, s);
+  handleTimeDisplay();
+}
+  </script>
+</html>
