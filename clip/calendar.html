@@ -113,6 +113,75 @@
         </form>
       </div>
     </main>
+    <hr>
+    <section style="margin:1em auto; text-align:center;">
+      <table class="conversion_table">
+        <tr><th>単位</th><th>秒数(Hex)</th><th>秒数(Dec)</th></tr>
+        <tr><th>1年(閏年)</th><td>1e28500</td><td>31622400</td></tr>
+        <tr><th>1年(平年)</th><td>1e13380</td><td>31536000</td></tr>
+        <tr><th>1ヶ月(31日)</th><td>28de80</td><td>2678400</td></tr>
+        <tr><th>1ヶ月(30日)</th><td>278d00</td><td>2592000</td></tr>
+        <tr><th>1ヶ月(29日)</th><td>263b80</td><td>2505600</td></tr>
+        <tr><th>1ヶ月(28日)</th><td>24ea00</td><td>2419200</td></tr>
+        <tr><th>1週間</th><td>93a80</td><td>604800</td></tr>
+        <tr><th>1日</th><td>15180</td><td>86400</td></tr>
+        <tr><th>1時間</th><td>e10</td><td>3600</td></tr>
+        <tr><th>1分</th><td>3c</td><td>60</td></tr>
+        <tr><th>1秒</th><td>1</td><td>1</td></tr>
+      </table>
+      <table class="conversion_table">
+        <tr><th>秒数(Hex)</th><th>IEC(Hex)</th><th>時間</th></tr>
+        <tr><th class="number">1 00 00 00 00</th><td>4Gi</td><td>136年37日</td></tr>
+        <tr><th class="number">10 00 00 00</th><td>100Mi</td><td>8年184日</td></tr>
+        <tr><th class="number">1 00 00 00</th><td>10Mi</td><td>194日4時間20分16秒</td></tr>
+        <tr><th class="number">10 00 00</th><td>1Mi</td><td>12日3時間16分16秒</td></tr>
+        <tr><th class="number">1 00 00</th><td>40Ki</td><td>18時間12分16秒</td></tr>
+        <tr><th class="number">10 00</th><td>4Ki</td><td>1時間8分16秒</td></tr>
+        <tr><th class="number">1 00</th><td>100</td><td>4分16秒</td></tr>
+        <tr><th class="number">10</th><td>10</td><td>16秒</td></tr>
+        <tr><th class="number">1</th><td>1</td><td>1秒</td></tr>
+      </table>
+      <table class="conversion_table">
+        <tr><th>秒数(Dec)</th><th>SI(Dec)</th><th>時間</th></tr>
+        <tr><th class="number">1 000 000 000</th><td>1G</td><td>31年251日</td></tr>
+        <tr><th class="number">100 000 000</th><td>100M</td><td>3年61日</td></tr>
+        <tr><th class="number">10 000 000</th><td>10M</td><td>115日17時間46分40秒</td></tr>
+        <tr><th class="number">1 000 000</th><td>1M</td><td>11日13時間46分40秒</td></tr>
+        <tr><th class="number">100 000</th><td>100k</td><td>1日3時間46分40秒</td></tr>
+        <tr><th class="number">10 000</th><td>10k</td><td>2時間46分40秒</td></tr>
+        <tr><th class="number">1 000</th><td>1k</td><td>16分40秒</td></tr>
+        <tr><th class="number">100</th><td>1h</td><td>1分40秒</td></tr>
+        <tr><th class="number">10</th><td>1da</td><td>10秒</td></tr>
+        <tr><th class="number">1</th><td>1</td><td>1秒</td></tr>
+      </table>
+    </section>
+    <style>
+.conversion_table{
+  display: inline-block;
+  margin: 1em;
+  border-collapse:collapse;
+}
+.conversion_table tr:first-child{
+  border-top:1px solid #314;
+  border-bottom:1px solid #314;
+}
+.conversion_table tr:last-child{
+  border-bottom:1px solid #314;
+}
+.conversion_table th{
+  padding-left:5px;
+  padding-right:5px;
+  background:#def;
+}
+.conversion_table th.number{
+  text-align: right;
+}
+.conversion_table td{
+  padding-left:5px;
+  padding-right:5px;
+  text-align: right;
+}
+    </style>
     <script type="module">
 import TimeBarIdea from './calendar/timeBarIdea.js';
 import PaintManager from './calendar/paintManager.js';
