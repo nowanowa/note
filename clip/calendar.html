@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=yes,initial-scale=1.0">
+    <meta name="keywords" content="UNIX時刻,UnixTime,UNIXタイムスタンプ,タイムスタンプ,十進数,十六進数,10進数,16進数,十進法,十六進法,10進法,16進法,カレンダー,比較,2038年問題">
+    <meta name="description" content="UNIX時刻(10進/16進)のカレンダーを通常の日時カレンダーと並べて表示します。">
+    <meta property="og:url" content="https://nowanowa.github.io/note/clip/calendar.html">
+    <meta property="og:title" content="UNIX時刻比較カレンダー">
+    <meta property="og:description" content="UNIX時刻(10進/16進)のカレンダーを通常の日時カレンダーと並べて表示します。">
+    <meta property="og:image" content="https://nowanowa.github.io/note/img/calendar.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creater" content="@3nowanowa40">
+    <meta name="twitter:site" content="@3nowanowa40">
+    <title>UNIX時刻比較カレンダー</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <style>
+.controler{
+  text-align:center;
+  margin: 1em 0;
+}
+.controler dt{
+  margin-top: 0.5em;
+  font-size: small;
+}
+.controler dd{
+  margin: 0;
+}
+.controler dd.dial_realtime{
+  font-weight: bold;
+}
+    </style>
+  </head>
+  <body>
+    <main>
+      <div id="calendar_scroll" style="overflow-x:scroll; text-align:center;">
+        <div style="display:inline-block; position:relative; border:1px solid black;">
+          <div id="dec_hex_calendar" style="position:relative; width:1024px; height:256px; overflow:hidden;"></div>
+          <div style="position:absolute; left:512px; top:0px; min-width:1px; height:256px; border-left:1px solid #00f;"></div>
+        </div>
+      </div>
+      <div class="controler">
+        <form name="zoom">
+          <button type="button" name="out"><span class="material-symbols-outlined">
+            zoom_out
+          </span></button>
+          <input type="range" name="range" min="1" value="25" max="25" step="1">
+          <button type="button" name="in"><span class="material-symbols-outlined">
+            zoom_in
+          </span></button>
+        </form>
+      </div>
+      <div class="controler">
+        <form name="timezone">
+          <select name="offset">
+            <option value="14">UTC+14</option>
+            <option value="13">UTC+13</option>
+            <option value="12">UTC+12</option>
+            <option value="11">UTC+11</option>
+            <option value="10">UTC+10</option>
+            <option value="9" selected>UTC+9</option>
+            <option value="8">UTC+8</option>
+            <option value="7">UTC+7</option>
+            <option value="6">UTC+6</option>
+            <option value="5">UTC+5</option>
+            <option value="4">UTC+4</option>
+            <option value="3">UTC+3</option>
+            <option value="2">UTC+2</option>
+            <option value="1">UTC+1</option>
+            <option value="0">UTC+0</option>
+            <option value="-1">UTC-1</option>
+            <option value="-2">UTC-2</option>
+            <option value="-3">UTC-3</option>
+            <option value="-4">UTC-4</option>
+            <option value="-5">UTC-5</option>
+            <option value="-6">UTC-6</option>
+            <option value="-7">UTC-7</option>
+            <option value="-8">UTC-8</option>
+            <option value="-9">UTC-9</option>
+            <option value="-10">UTC-10</option>
+            <option value="-11">UTC-11</option>
+            <option value="-12">UTC-12</option>
+          </select>
+        </form>
+      </div>
+      <div id="dec_hex_dial" class="controler">
+        <form name="dial">
+          <dl>
+            <dt>DateTime</dt>
+            <dd id="dec_hex_dial_datetime" class="dial_realtime"></dd>
+            <dd class="dial_userinput" style="display:none;">
+              <input type="text" name="datetime" data-id="dec_hex_dial_datetime"></input>
+            </dd>
+            <dt>Hexadecimal</dt>
+            <dd id="dec_hex_dial_hex" class="dial_realtime"></dd>
+            <dd class="dial_userinput" style="display:none;">
+              <input type="text" name="hexadecimal" data-id="dec_hex_dial_hex"></input>
+            </dd>
+            <dt>Decimal</dt>
+            <dd id="dec_hex_dial_dec" class="dial_realtime"></dd>
+            <dd class="dial_userinput" style="display:none;">
+              <input type="text" name="decimal" data-id="dec_hex_dial_dec"></input>
+            </dd>
+            </dd>
+          </dl>
+        </form>
+      </div>
+      <div class="controler">
+        <form name="realtime">
+          <label>
+            <input type="checkbox" name="go" value="on" checked> realtime
+          </label>
+        </form>
+      </div>
+    </main>
+    <script type="module">
+import TimeBarIdea from './calendar/timeBarIdea.js';
+import PaintManager from './calendar/paintManager.js';
+import {datetimeNestingRule} from './calendar/nestingRuleDatetime.js';
+import {hexadecimalNestingRule} from './calendar/nestingRuleHexadecimal.js';
+import {decimalNestingRule} from './calendar/nestingRuleDecimal.js';
+
+import DialManager from './calendar/dialManager.js';
+
+document.addEventListener('DOMContentLoaded', (e) => {
+  // スクロール
+  const xScroll = document.getElementById('calendar_scroll');
+  xScroll.scrollLeft = (xScroll.scrollWidth - xScroll.getBoundingClientRect().width) / 2;
+
+  /*
+   * デジタル時計
+   */
+  const targetDT = document.getElementById('dec_hex_dial_datetime');
+  const targetHex = document.getElementById('dec_hex_dial_hex');
+  const targetDec = document.getElementById('dec_hex_dial_dec');
+  const dial = new DialManager(targetDT, targetHex, targetDec);
+  dial.timeZoneOffset = 9 * 3600;
+  dial.update();
+
+  /*
+   * 棒時計
+   */
+  const now = new Date();
+  const datetimeIdea = new TimeBarIdea(now, 16, 1, datetimeNestingRule, 9 * 3600);
+  const hexadecimalIdea = new TimeBarIdea(now, 16, 1, hexadecimalNestingRule, 0);
+  const decimalIdea = new TimeBarIdea(now, 16, 1, decimalNestingRule, 0);
+
+  const painter = new PaintManager('dec_hex_calendar', document);
+  painter.appendTimeBar(16, datetimeIdea, 'DateTime');
+  painter.appendTimeBar(96, hexadecimalIdea, 'Hexadecimal');
+  painter.appendTimeBar(176, decimalIdea, 'Decimal');
+
+  painter.create();
+  painter.update();
+
+  /*
+   * ズーム操作
+   */
+  function zoomAction(zoomLevel) {
+    const zoomValue = (20 - zoomLevel);
+    painter.setZoom(zoomValue);
+  }
+
+  const zoom = document.forms['zoom'];
+  zoom['in'].addEventListener('click', function(e){
+    const curr = Number(zoom['range'].value);
+    const zoomLevel = curr + (curr < 25 ? 1 : 0);
+    zoom['range'].value = zoomLevel;
+    if (curr < 25) {
+      zoomAction(zoomLevel);
+    }
+  });
+  zoom['out'].addEventListener('click', function(e){
+    const curr = Number(zoom['range'].value);
+    const zoomLevel = curr - (curr > 1 ? 1 : 0);
+    zoom['range'].value = zoomLevel;
+    if (curr > 1) {
+      zoomAction(zoomLevel);
+    }
+  });
+  zoom['range'].addEventListener('change', function(e){
+    const zoomLevel = Number(zoom['range'].value);
+    zoomAction(zoomLevel);
+  });
+
+  /*
+   * タイムゾーン操作
+   */
+  function timezoneAction(tzHoursOffset) {
+    const tzSecondsOffset = tzHoursOffset * 3600;
+    dial.timeZoneOffset = tzSecondsOffset;
+    painter.setTimeZone(tzSecondsOffset);
+  }
+
+  const timezone = document.forms['timezone'];
+  timezone['offset'].addEventListener('change', function(e){
+    const hoursOffset = timezone['offset'].value;
+    timezoneAction(Number(hoursOffset));
+  });
+
+  /*
+   * リアルタイム時計
+   */
+  const realtime = document.forms['realtime'];
+  realtime['go'].addEventListener('change', function(e) {
+    const realDials = document.querySelectorAll('#dec_hex_dial .dial_realtime');
+    const userDials = document.querySelectorAll('#dec_hex_dial .dial_userinput');
+
+    const isRealtime = realtime['go'].checked;
+    if (isRealtime) {
+      if (dial.isRealTimeUpdate === false) {
+        dial.isRealTimeUpdate = true;
+        dial.update();
+      }
+      if (painter.isRealTimeUpdate === false) {
+        painter.isRealTimeUpdate = true;
+        painter.update();
+      }
+      Array.from(realDials).forEach((elem) => elem.style.display = '');
+      Array.from(userDials).forEach((elem) => elem.style.display = 'none');
+    } else {
+      dial.isRealTimeUpdate = false;
+      painter.isRealTimeUpdate = false;
+      Array.from(realDials).forEach((elem) => elem.style.display = 'none');
+      Array.from(userDials).forEach((elem) => {
+        elem.style.display = '';
+        const input = elem.querySelector('input');
+        const ddid = input.dataset.id;
+        const text = document.getElementById(ddid).textContent;
+        let simple = '';
+        if (text.match(/UTC/)) {
+          simple = text.replace(/\sUTC.*$/, '').replace(/[\-\:]/g, '');
+        } else if (text.match(/0x/)) {
+          simple = text.replace(/0x/, '').replace(/\s/g, '');
+        } else {
+          simple = text.replace(/\s/g, '');
+        }
+        input.value = simple;
+      });
+    }
+  });
+
+  /*
+   * 手入力換算
+   */
+  function dialSet(e) {
+    let input = e.target;
+    if (input.name === 'offset') {
+      input = document.forms['dial']['datetime'];
+    }
+    const val = input.value.replace(/\s/g, '');;
+    const tzHours = Number(document.forms['timezone']['offset'].value);
+
+    let datetime;
+    switch (input.name) {
+      case 'datetime':
+        const YYYY = val.slice(0, 4);
+        const MM = val.slice(4, 6);
+        const DD = val.slice(6, 8);
+        const hh = val.slice(8, 10);
+        const mm = val.slice(10, 12);
+        const ss = val.slice(12, 14);
+        const date = YYYY + '-' + MM + '-' + DD;
+        const time = hh + ':' + mm + ':' + ss;
+        const localeDT = new Date(date + 'T' + time + '.000Z');
+        datetime = new Date(localeDT.getTime() - tzHours * 3600 * 1000);
+        break;
+      case 'hexadecimal':
+        datetime = new Date(parseInt(val, 16) * 1000);
+        break;
+      case 'decimal':
+        datetime = new Date(Number(val) * 1000);
+        break;
+      default:
+        datetime = new Date();
+        break;
+    }
+    const rewrites = ['datetime', 'hexadecimal', 'decimal'].filter(n => n !== input.name);
+    rewrites.forEach(name => {
+      let val;
+      switch (name) {
+        case 'datetime':
+          const tzDT = new Date(datetime.getTime() + tzHours * 3600 * 1000);
+          val = tzDT.toISOString().replace(/\.\d+Z/g, '').replace(/[\-\:]/g, '').replace(/T/, ' ');
+          break;
+        case 'hexadecimal':
+          val = Math.floor(datetime.getTime() / 1000).toString(16);
+          break;
+        case 'decimal':
+          val = Math.floor(datetime.getTime() / 1000).toString(10);
+          break;
+        default:
+          break;
+      }
+      document.forms['dial'][name].value = val;
+    });
+    painter.centralDateTime = datetime;
+    painter.update();
+  }
+  document.forms['dial'].addEventListener('keyup', dialSet);
+  document.forms['timezone']['offset'].addEventListener('change', dialSet);
+
+});
+    </script>
+  </body>
+</html>
