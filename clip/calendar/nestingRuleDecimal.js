@@ -32,7 +32,7 @@ export const decimalNestingRule = (() => {
       block.numeric = quot % 10;
       if (quot % 10 === 0) {
         const quotient = quot / 10;
-        const remainder = new Array(Math.log10(unit) + 2).join('_');
+        const remainder = '_' + new Array(Math.log10(unit) + 2 - 1).join('0');
         block.hugerUnitOrigins.push(quotient + remainder);
       }
 
