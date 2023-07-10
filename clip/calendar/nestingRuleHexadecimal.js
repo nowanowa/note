@@ -32,7 +32,7 @@ export const hexadecimalNestingRule = (() => {
       block.numeric = (quot % 16).toString(16);
       if (quot % 16 === 0) {
         const quotient = (quot / 16).toString(16);
-        const remainder = new Array(Math.log2(unit)/4 + 2).join('_');
+        const remainder = '_' + new Array(Math.log2(unit)/4 + 2 - 1).join('0');
         block.hugerUnitOrigins.push(quotient + remainder);
       }
 
